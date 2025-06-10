@@ -1,42 +1,36 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { PedidosService } from './pedidos.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { PedidoService } from './pedidos.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Pedidos')
 @Controller('pedidos')
-export class PedidosController {
-  constructor(private readonly pedidosService: PedidosService) {}
+export class PedidoController {
+  constructor(private readonly pedidoService: PedidoService) {}
 
   @Post()
   create(@Body() createPedidoDto: CreatePedidoDto) {
-    return this.pedidosService.create(createPedidoDto);
+    return this.pedidoService.create(createPedidoDto);
   }
 
   @Get()
   findAll() {
-    return this.pedidosService.findAll();
+    return this.pedidoService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.pedidosService.findOne(+id);
+    return this.pedidoService.findOne(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
-    return this.pedidosService.update(+id, updatePedidoDto);
+    return this.pedidoService.update(+id, updatePedidoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.pedidosService.remove(+id);
+    return this.pedidoService.remove(+id);
   }
 }
