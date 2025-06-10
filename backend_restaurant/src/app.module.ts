@@ -1,18 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsuarioModule } from './usuario/usuario.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlatillosModule } from './platillos/platillos.module';
-import { RepartidorModule } from './repartidor/repartidor.module';
-import { PedidosModule } from './pedidos/pedidos.module';
-import { PagoModule } from './pago/pago.module';
-import { DetallesModule } from './detalles/detalles.module';
-import { DireccionesModule } from './direcciones/direcciones.module';
-import { ClienteModule } from './cliente/cliente.module';
+import { Platillo } from './platillos/entities/platillo.entity';
 
 @Module({
-  imports: [UsuarioModule, PlatillosModule, RepartidorModule, PedidosModule, PagoModule, DetallesModule, DireccionesModule, ClienteModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'tu_usuario',
+      password: 'tu_password',
+      database: 'sis257_restaurante',
+      entities: [Platillo], // asegúrate que esté acá también
+      synchronize: true, // cuidado en producción
+    }),
+    PlatillosModule,
+  ],
 })
 export class AppModule {}
