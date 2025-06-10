@@ -16,7 +16,6 @@ onMounted(() => {
   getDireccion()
 })
 
-
 var platillos = ref<Platillo[]>([])
 async function getPlatillo() {
   platillos.value = await http.get('platillos').then((response) => response.data)
@@ -74,7 +73,7 @@ async function editarPedido() {
 async function getPedido() {
   await http.get(`${ENDPOINT}/${id}`).then((response) => {
     ;(cantidad.value = response.data.cantidad),
-    (total.value = response.data.total),
+      (total.value = response.data.total),
       (fechaPedido.value = response.data.fechaPedido),
       (idRepartidor.value = response.data.idRepartidor),
       (idCliente.value = response.data.idCliente),
@@ -103,7 +102,9 @@ onMounted(() => {
         <li class="breadcrumb-item">
           <RouterLink to="/pedido">Pedidos</RouterLink>
         </li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: black">Editar Pedido</li>
+        <li class="breadcrumb-item active" aria-current="page" style="color: black">
+          Editar Pedido
+        </li>
       </ol>
     </nav>
 
@@ -137,7 +138,6 @@ onMounted(() => {
           <label for="cliente">Nombre del Cliente</label>
         </div>
 
-        
         <div class="form-floating mb-3">
           <select v-model="idDireccion" class="form-select">
             <option v-for="direccion in direcciones" :value="direccion.id">
@@ -147,7 +147,6 @@ onMounted(() => {
           <label for="cliente">Dirección</label>
         </div>
 
-        
         <div class="form-floating mb-3">
           <select v-model="idPlatillo" class="form-select">
             <option v-for="platillo in platillos" :value="platillo.id">
@@ -169,13 +168,7 @@ onMounted(() => {
         </div>
 
         <div class="form-floating">
-          <input
-            type="number"
-            class="form-control"
-            v-model="total"
-            placeholder="total"
-            required
-          />
+          <input type="number" class="form-control" v-model="total" placeholder="total" required />
           <label for="total">Total</label>
         </div>
 

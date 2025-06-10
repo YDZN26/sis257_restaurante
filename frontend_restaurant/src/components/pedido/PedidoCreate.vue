@@ -16,7 +16,6 @@ onMounted(() => {
   getDireccion()
 })
 
-
 var platillos = ref<Platillo[]>([])
 async function getPlatillo() {
   platillos.value = await http.get('platillos').then((response) => response.data)
@@ -119,7 +118,6 @@ function goBack() {
           <label for="cliente">Nombre del Cliente</label>
         </div>
 
-        
         <div class="form-floating mb-3">
           <select v-model="idDireccion" class="form-select">
             <option v-for="direccion in direcciones" :value="direccion.id">
@@ -129,7 +127,6 @@ function goBack() {
           <label for="cliente">Dirección</label>
         </div>
 
-        
         <div class="form-floating mb-3">
           <select v-model="idPlatillo" class="form-select">
             <option v-for="platillo in platillos" :value="platillo.id">
@@ -151,13 +148,7 @@ function goBack() {
         </div>
 
         <div class="form-floating">
-          <input
-            type="number"
-            class="form-control"
-            v-model="total"
-            placeholder="total"
-            required
-          />
+          <input type="number" class="form-control" v-model="total" placeholder="total" required />
           <label for="total">Total</label>
         </div>
 
@@ -171,8 +162,6 @@ function goBack() {
           />
           <label for="fechaPedido">fecha del Pedido</label>
         </div>
-
-
 
         <div class="text-center mt-3">
           <button type="submit" class="btn btn-primary btn-lg">

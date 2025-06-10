@@ -2,7 +2,8 @@
 
 <template>
   <br /><br />
-  <RouterView ENDPOINT_API="repartidor"></RouterView><!--link de swgager-->
+  <RouterView ENDPOINT_API="repartidor"></RouterView
+  ><!--link de swgager-->
 </template>
 
 <style></style>

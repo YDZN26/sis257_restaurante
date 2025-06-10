@@ -2,9 +2,9 @@
 import { onMounted, ref } from 'vue'
 import http from '@/plugins/axios'
 import router from '@/router'
-import { useAuthStore } from "@/stores/index";
-import type { Direccion } from '@/models/direccion';
-const authStore = useAuthStore();
+import { useAuthStore } from '@/stores/index'
+import type { Direccion } from '@/models/direccion'
+const authStore = useAuthStore()
 
 const props = defineProps<{
   //esto se copia 7-11
@@ -35,7 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <br /><br /><br />
+  <br /><br /><br />
   <div v-if="authStore.token">
     <div class="find-us">
       <div class="container">
@@ -50,24 +50,23 @@ onMounted(() => {
                   <li class="breadcrumb-item active" aria-current="page">Direcciones</li>
                 </ol>
               </nav>
-              <h2 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Lista de Direcciones
+              <h2 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
+                Lista de Direcciones
               </h2>
-              <div class="col-12">
-              </div>
+              <div class="col-12"></div>
             </div>
-            <RouterLink  to="/direcciones/crear">Crear Nuevo Direccion
-            </RouterLink>
+            <RouterLink to="/direcciones/crear">Crear Nuevo Direccion </RouterLink>
           </div>
         </div>
       </div>
     </div>
-    <br>
+    <br />
     <div class="container">
-    <div class="table-responsive">
-      <!--tablas propias de bottstrap-->
-      <table class="table table-bordered">
-        <thead>
-          <tr style="background-color: black">
+      <div class="table-responsive">
+        <!--tablas propias de bottstrap-->
+        <table class="table table-bordered">
+          <thead>
+            <tr style="background-color: black">
               <th scope="col" style="color: #e49e48">N°</th>
               <th scope="col" style="color: #e49e48">Registro de la Direccion</th>
               <th scope="col" style="color: #e49e48">Nombre del Cliente</th>
@@ -77,33 +76,37 @@ onMounted(() => {
               <th scope="col" style="color: #e49e48">Estado</th>
               <th scope="col" style="color: #e49e48">Editar/Eliminar</th>
             </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(direcciones, index) in direccion.values()" :key="direcciones.id" style="background-color: black">
-            <!--el singular solo es una variable-->
-            <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
-            <!--cuando el intex comienza en 0 le damos mas 1-->
-            <td align="center" style="color: #f8cb2e">{{ direcciones.id }}</td>
-            <td style="color: #f8cb2e">{{ direcciones.clientes.nombreCliente }}</td>
-            <td style="color: #f8cb2e">{{ direcciones.direccion }}</td>
-            <td style="color: #f8cb2e">{{ direcciones.piso}}</td>
-            <td style="color: #f8cb2e">{{ direcciones.indicaciones }}</td>
-            <td style="color: #f8cb2e">{{ direcciones.estado }}</td>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(direcciones, index) in direccion.values()"
+              :key="direcciones.id"
+              style="background-color: black"
+            >
+              <!--el singular solo es una variable-->
+              <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
+              <!--cuando el intex comienza en 0 le damos mas 1-->
+              <td align="center" style="color: #f8cb2e">{{ direcciones.id }}</td>
+              <td style="color: #f8cb2e">{{ direcciones.clientes.nombreCliente }}</td>
+              <td style="color: #f8cb2e">{{ direcciones.direccion }}</td>
+              <td style="color: #f8cb2e">{{ direcciones.piso }}</td>
+              <td style="color: #f8cb2e">{{ direcciones.indicaciones }}</td>
+              <td style="color: #f8cb2e">{{ direcciones.estado }}</td>
 
-            <td>
-              <button class="btn text-success" @click="toEdit(direcciones.id)">
-                <font-awesome-icon icon="fa-solid fa-edit" />
-              </button>
-              <button class="btn text-danger" @click="toDelete(direcciones.id)">
-                <font-awesome-icon icon="fa-solid fa-trash" />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              <td>
+                <button class="btn text-success" @click="toEdit(direcciones.id)">
+                  <font-awesome-icon icon="fa-solid fa-edit" />
+                </button>
+                <button class="btn text-danger" @click="toDelete(direcciones.id)">
+                  <font-awesome-icon icon="fa-solid fa-trash" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <style scoped></style>

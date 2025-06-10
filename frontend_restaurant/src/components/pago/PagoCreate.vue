@@ -68,7 +68,13 @@ function goBack() {
       <form @submit.prevent="crearPago">
         <!--cuando yo aprete guardar me llma al metodo crearPago-->
         <div class="form-floating mb-3">
-          <input type="number" class="form-control" v-model="sueldo" placeholder="sueldo" required />
+          <input
+            type="number"
+            class="form-control"
+            v-model="sueldo"
+            placeholder="sueldo"
+            required
+          />
           <label for="sueldo">Total sueldo</label>
         </div>
         <div class="form-floating mb-3">
@@ -76,11 +82,23 @@ function goBack() {
           <label for="dia">Total dia</label>
         </div>
         <div class="form-floating mb-3">
-          <input type="number" class="form-control" v-model="diaExtra" placeholder="diaExtra" required />
+          <input
+            type="number"
+            class="form-control"
+            v-model="diaExtra"
+            placeholder="diaExtra"
+            required
+          />
           <label for="diaExtra">Total dia Extra</label>
         </div>
         <div class="form-floating mb-3">
-          <input type="number" class="form-control" v-model="descuento" placeholder="descuento" required />
+          <input
+            type="number"
+            class="form-control"
+            v-model="descuento"
+            placeholder="descuento"
+            required
+          />
           <label for="descuento">Total descuento</label>
         </div>
         <div class="form-floating mb-3">

@@ -12,7 +12,7 @@
       </video>
     </div>
   </section>
-  <section class="hero-section" id="section_2" style="background-color: black;">
+  <section class="hero-section" id="section_2" style="background-color: black">
     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">

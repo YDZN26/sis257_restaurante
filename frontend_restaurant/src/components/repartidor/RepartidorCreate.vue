@@ -82,7 +82,13 @@ function goBack() {
         </div>
 
         <div class="form-floating mb-3">
-          <input type="Date" class="form-control" v-model="fechaIngreso" placeholder="Fecha de Ingreso" required />
+          <input
+            type="Date"
+            class="form-control"
+            v-model="fechaIngreso"
+            placeholder="Fecha de Ingreso"
+            required
+          />
           <label for="fechaIngreso">Fecha de Ingreso a Trabajar</label>
         </div>
 
@@ -92,7 +98,6 @@ function goBack() {
           </button>
         </div>
       </form>
-    
     </div>
     <div class="text-left">
       <button class="btn btn-success" @click="goBack">Volver</button>

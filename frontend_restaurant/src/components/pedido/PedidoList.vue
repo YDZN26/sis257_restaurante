@@ -87,7 +87,7 @@ onMounted(() => {
               <td style="color: #f8cb2e">{{ pedido.platillos.nombre }}</td>
               <td style="color: #f8cb2e">{{ pedido.cantidad }}</td>
               <td style="color: #f8cb2e">{{ pedido.total }}</td>
-              <td style="color: #f8cb2e">{{ pedido.fechaPedido}}</td>
+              <td style="color: #f8cb2e">{{ pedido.fechaPedido }}</td>
 
               <td>
                 <button class="btn text-success" @click="toEdit(pedido.id)">

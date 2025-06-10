@@ -1,7 +1,7 @@
 export interface Repartidor {
-    id: number
-    nombreRepartidor: string
-    carnetIdentidad: string
-    fechaEdad: Date
-    fechaIngreso: Date
-  }
+  id: number
+  nombreRepartidor: string
+  carnetIdentidad: string
+  fechaEdad: Date
+  fechaIngreso: Date
+}

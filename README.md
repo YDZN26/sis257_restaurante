@@ -18,13 +18,13 @@ Servicios Ofrecidos:
 
 Servicio de pedidos en linea.
 
-
 Ubicación ideal:
-El restuarante esta ubicado en la ciudad de Sucre en la avenida del Maestro frente al la normal S/N  
+El restuarante esta ubicado en la ciudad de Sucre en la avenida del Maestro frente al la normal S/N
 
 Las entidades:
 
 ---
+
 1.USUARIO
 id
 usuario
@@ -82,4 +82,5 @@ carnetIdentidad
 fechaNacimiento
 celular
 fecha_registro
+
 ---

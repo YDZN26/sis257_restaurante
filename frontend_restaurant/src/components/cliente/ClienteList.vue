@@ -2,9 +2,9 @@
 import { onMounted, ref } from 'vue'
 import http from '@/plugins/axios'
 import router from '@/router'
-import { useAuthStore } from "@/stores/index";
-import type { Cliente } from '@/models/cliente';
-const authStore = useAuthStore();
+import { useAuthStore } from '@/stores/index'
+import type { Cliente } from '@/models/cliente'
+const authStore = useAuthStore()
 
 const props = defineProps<{
   //esto se copia 7-11
@@ -35,7 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <br /><br /><br />
+  <br /><br /><br />
   <div v-if="authStore.token">
     <div class="find-us">
       <div class="container">
@@ -50,57 +50,62 @@ onMounted(() => {
                   <li class="breadcrumb-item active" aria-current="page">Clientes</li>
                 </ol>
               </nav>
-              <h2 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Lista de Clientes
+              <h2 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
+                Lista de Clientes
               </h2>
-              <div class="col-12">
-              </div>
+              <div class="col-12"></div>
             </div>
-            <RouterLink  to="/clientes/crear">Crear Nuevo Cliente
-            </RouterLink>
+            <RouterLink to="/clientes/crear">Crear Nuevo Cliente </RouterLink>
           </div>
         </div>
       </div>
     </div>
-    <br>
+    <br />
     <div class="container">
-    <div class="table-responsive">
-      <!--tablas propias de bottstrap-->
-      <table class="table table-bordered">
-        <thead>
-          <tr style="background-color: black">
-            <th scope="col" style="color: #e49e48">N°</th>
-            <th scope="col" style="color: #e49e48"> Registro de Clientes</th>
-            <th scope="col" style="color: #e49e48">Nombre del Cliente</th>
-            <th scope="col" style="color: #e49e48">Carnet</th>
-            <th scope="col" style="color: #e49e48">Edad</th>
-            <th scope="col" style="color: #e49e48">Celular</th>
-            <th scope="col" style="color: #e49e48">Editar/Eliminar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(clientes, index) in cliente" :key="clientes.id" style="background-color: black">
-            <!--el singular solo es una variable-->
-            <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
-            <!--cuando el intex comienza en 0 le damos mas 1-->
-            <td align="center" style="color: #f8cb2e">{{ clientes.id }}</td>
-            <td style="color: #f8cb2e">{{ clientes.nombreCliente }}</td>
-            <td style="color: #f8cb2e">{{ clientes.carnetIdentidad }}</td>
-            <td style="color: #f8cb2e">{{ new Date(clientes.fechaEdad).toLocaleDateString('es-ES') }}</td>
-            <td style="color: #f8cb2e">{{ clientes.celular }}</td>
-            <td>
-              <button class="btn text-success" @click="toEdit(clientes.id)">
-                <font-awesome-icon icon="fa-solid fa-edit" />
-              </button>
-              <button class="btn text-danger" @click="toDelete(clientes.id)">
-                <font-awesome-icon icon="fa-solid fa-trash" />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <!--tablas propias de bottstrap-->
+        <table class="table table-bordered">
+          <thead>
+            <tr style="background-color: black">
+              <th scope="col" style="color: #e49e48">N°</th>
+              <th scope="col" style="color: #e49e48">Registro de Clientes</th>
+              <th scope="col" style="color: #e49e48">Nombre del Cliente</th>
+              <th scope="col" style="color: #e49e48">Carnet</th>
+              <th scope="col" style="color: #e49e48">Edad</th>
+              <th scope="col" style="color: #e49e48">Celular</th>
+              <th scope="col" style="color: #e49e48">Editar/Eliminar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(clientes, index) in cliente"
+              :key="clientes.id"
+              style="background-color: black"
+            >
+              <!--el singular solo es una variable-->
+              <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
+              <!--cuando el intex comienza en 0 le damos mas 1-->
+              <td align="center" style="color: #f8cb2e">{{ clientes.id }}</td>
+              <td style="color: #f8cb2e">{{ clientes.nombreCliente }}</td>
+              <td style="color: #f8cb2e">{{ clientes.carnetIdentidad }}</td>
+              <td style="color: #f8cb2e">
+                {{ new Date(clientes.fechaEdad).toLocaleDateString('es-ES') }}
+              </td>
+              <td style="color: #f8cb2e">{{ clientes.celular }}</td>
+              <td>
+                <button class="btn text-success" @click="toEdit(clientes.id)">
+                  <font-awesome-icon icon="fa-solid fa-edit" />
+                </button>
+                <button class="btn text-danger" @click="toDelete(clientes.id)">
+                  <font-awesome-icon icon="fa-solid fa-trash" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <style scoped></style>

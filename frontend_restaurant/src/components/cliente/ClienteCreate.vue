@@ -98,7 +98,6 @@ function goBack() {
           </button>
         </div>
       </form>
-    
     </div>
     <div class="text-left">
       <button class="btn btn-success" @click="goBack">Volver</button>

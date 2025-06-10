@@ -6,27 +6,24 @@ const authStore = useAuthStore()
 </script>
 
 <template>
-  <header class="site-header" style="background-color: black;">
-
-      <div class="mx-5">
-        <div class="col-lg-12 col-12 d-flex flex-wrap">
-          <p class="d-flex me-4 mb-0">
-            <i class="bi-person custom-icon me-2" style="color: #E49E48"></i>
-            <strong  style="color: #E49E48"
-              >Bienvenido al área de administración de los repartidores del restaurante QUE RICO!</strong
-            >
-          </p>
-        </div>
+  <header class="site-header" style="background-color: black">
+    <div class="mx-5">
+      <div class="col-lg-12 col-12 d-flex flex-wrap">
+        <p class="d-flex me-4 mb-0">
+          <i class="bi-person custom-icon me-2" style="color: #e49e48"></i>
+          <strong style="color: #e49e48"
+            >Bienvenido al área de administración de los repartidores del restaurante QUE
+            RICO!</strong
+          >
+        </p>
       </div>
-
+    </div>
   </header>
   <nav
     class="navbar navbar-expand-lg"
     :style="'background-color:' + (location.path != '/' ? 'black ' : '')"
   >
-
     <div class="mx-5">
-
       <RouterLink v-if="!authStore.token" to="/login" class="btn custom-btn d-lg-none ms-auto me-4">
         Iniciar Sesión
       </RouterLink>

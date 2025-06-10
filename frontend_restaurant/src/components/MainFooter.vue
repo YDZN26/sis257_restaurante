@@ -7,8 +7,7 @@
             <h2 class="text-white mb-lg-0">QUE RICO!</h2>
           </div>
 
-          <div
-            class="col-lg-6 col-12 d-flex justify-content-lg-end align-items-center">
+          <div class="col-lg-6 col-12 d-flex justify-content-lg-end align-items-center">
             <ul class="social-icon d-flex justify-content-lg-end">
               <li class="social-icon-item">
                 <a href="#" class="social-icon-link">
@@ -56,23 +55,23 @@
             </li>
 
             <li class="site-footer-link-item">
-              <a  class="site-footer-link">Servicio</a>
+              <a class="site-footer-link">Servicio</a>
             </li>
 
             <li class="site-footer-link-item">
-              <a  class="site-footer-link">Ambiente</a>
+              <a class="site-footer-link">Ambiente</a>
             </li>
 
             <li class="site-footer-link-item">
-              <a  class="site-footer-link">Higiene</a>
+              <a class="site-footer-link">Higiene</a>
             </li>
 
             <li class="site-footer-link-item">
-              <a  class="site-footer-link">Valor</a>
+              <a class="site-footer-link">Valor</a>
             </li>
 
             <li class="site-footer-link-item">
-              <a  class="site-footer-link">Consistencia</a>
+              <a class="site-footer-link">Consistencia</a>
             </li>
           </ul>
         </div>
@@ -91,9 +90,7 @@
         <div class="col-lg-3 col-md-6 col-11 mb-4 mb-lg-0 mb-md-0">
           <h5 class="site-footer-title mb-3">Ubicación</h5>
 
-          <p class="text-white d-flex mt-3 mb-2">
-            Sucre-Bolivia
-          </p>
+          <p class="text-white d-flex mt-3 mb-2">Sucre-Bolivia</p>
         </div>
       </div>
     </div>

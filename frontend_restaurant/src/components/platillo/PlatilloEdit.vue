@@ -79,7 +79,13 @@ onMounted(() => {
           <label for="nombre">Nombre</label>
         </div>
         <div class="form-floating mb-3">
-          <input type="text" class="form-control" v-model="urlPlatillo" placeholder="urlPlatillo" required />
+          <input
+            type="text"
+            class="form-control"
+            v-model="urlPlatillo"
+            placeholder="urlPlatillo"
+            required
+          />
           <label for="urlPlatillo">Url Platillo</label>
         </div>
         <div class="form-floating mb-3">

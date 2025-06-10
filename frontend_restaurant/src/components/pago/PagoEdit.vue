@@ -83,7 +83,13 @@ onMounted(() => {
     <div class="row">
       <form @submit.prevent="editarPlatillo">
         <div class="form-floating mb-3">
-          <input type="number" class="form-control" v-model="sueldo" placeholder="sueldo" required />
+          <input
+            type="number"
+            class="form-control"
+            v-model="sueldo"
+            placeholder="sueldo"
+            required
+          />
           <label for="sueldo">Total sueldo</label>
         </div>
         <div class="form-floating mb-3">

@@ -1,19 +1,23 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlatillosModule } from './platillos/platillos.module';
-import { Platillo } from './platillos/entities/platillo.entity';
 
+console.log('DB_HOST:', process.env.DB_HOST);
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'tu_usuario',
-      password: 'tu_password',
-      database: 'sis257_restaurante',
-      entities: [Platillo], // asegúrate que esté acá también
-      synchronize: true, // cuidado en producción
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     PlatillosModule,
   ],

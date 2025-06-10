@@ -7,7 +7,7 @@ import type { Cliente } from '@/models/cliente'
 
 var pedido = ref<Pedido[]>([])
 async function getPedidos() {
-  pedido.value = await http.get('pedido').then((response) => response.data)// del  view
+  pedido.value = await http.get('pedido').then((response) => response.data) // del  view
 }
 
 onMounted(() => {

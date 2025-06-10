@@ -52,7 +52,9 @@ onMounted(() => {
         <li class="breadcrumb-item">
           <RouterLink to="/clientes">Cliente</RouterLink>
         </li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: black">Editar Cliente</li>
+        <li class="breadcrumb-item active" aria-current="page" style="color: black">
+          Editar Cliente
+        </li>
       </ol>
     </nav>
     <div class="find-us">
@@ -109,7 +111,6 @@ onMounted(() => {
           </button>
         </div>
       </form>
-
     </div>
     <div class="text-left">
       <button class="btn btn-success" @click="goBack">Volver</button>

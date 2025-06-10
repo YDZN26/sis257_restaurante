@@ -52,7 +52,9 @@ onMounted(() => {
         <li class="breadcrumb-item">
           <RouterLink to="/repartidor">Repartidor</RouterLink>
         </li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: black">Editar Repartidor</li>
+        <li class="breadcrumb-item active" aria-current="page" style="color: black">
+          Editar Repartidor
+        </li>
       </ol>
     </nav>
     <div class="find-us">
@@ -93,7 +95,13 @@ onMounted(() => {
         </div>
 
         <div class="form-floating mb-3">
-          <input type="Date" class="form-control" v-model="fechaIngreso" placeholder="Fecha de Ingreso" required />
+          <input
+            type="Date"
+            class="form-control"
+            v-model="fechaIngreso"
+            placeholder="Fecha de Ingreso"
+            required
+          />
           <label for="fechaIngreso">Fecha de Ingreso a Trabajar</label>
         </div>
 
@@ -103,7 +111,6 @@ onMounted(() => {
           </button>
         </div>
       </form>
-
     </div>
     <div class="text-left">
       <button class="btn btn-success" @click="goBack">Volver</button>

@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -18,4 +21,4 @@ async function bootstrap() {
   await app.listen(3000);
   console.log(`🚀 Backend corriendo en: http://localhost:3000/api`);
 }
-bootstrap();
+void bootstrap();

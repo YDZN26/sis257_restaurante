@@ -78,7 +78,9 @@ onMounted(() => {
         <li class="breadcrumb-item">
           <RouterLink to="/detalles">Detalles</RouterLink>
         </li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: black">Editar Detalle</li>
+        <li class="breadcrumb-item active" aria-current="page" style="color: black">
+          Editar Detalle
+        </li>
       </ol>
     </nav>
 

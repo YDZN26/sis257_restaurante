@@ -94,13 +94,7 @@ onMounted(() => {
           <label for="direccion">Dirección</label>
         </div>
         <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            v-model="piso"
-            placeholder="piso"
-            required
-          />
+          <input type="text" class="form-control" v-model="piso" placeholder="piso" required />
           <label for="piso">Piso</label>
         </div>
         <div class="form-floating mb-3">
@@ -114,16 +108,10 @@ onMounted(() => {
           <label for="indicaciones">Indicaciones</label>
         </div>
         <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            v-model="estado"
-            placeholder="estado"
-            required
-          />
+          <input type="text" class="form-control" v-model="estado" placeholder="estado" required />
           <label for="estado">Estado</label>
         </div>
-        
+
         <div class="form-floating mb-3">
           <select v-model="idCliente" class="form-select">
             <option v-for="clientes in cliente" :value="clientes.id">

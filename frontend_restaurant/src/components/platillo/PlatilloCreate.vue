@@ -46,9 +46,7 @@ function goBack() {
                 <li class="breadcrumb-item">
                   <RouterLink to="/platillos">Platillos</RouterLink>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                  Crear
-                </li>
+                <li class="breadcrumb-item active" aria-current="page">Crear</li>
               </ol>
             </nav>
             <h2>INSERTAR DATOS DEL PLATILLO</h2>
@@ -60,13 +58,7 @@ function goBack() {
     <div class="row">
       <form @submit.prevent="crearPlatillo">
         <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            v-model="nombre"
-            placeholder="nombre"
-            required
-          />
+          <input type="text" class="form-control" v-model="nombre" placeholder="nombre" required />
           <label for="nombre">Nombre Platillo</label>
         </div>
         <div class="form-floating mb-3">
@@ -116,7 +108,6 @@ function goBack() {
           </button>
         </div>
       </form>
-
     </div>
     <div class="text-left">
       <button class="btn btn-success" @click="goBack">Volver</button>

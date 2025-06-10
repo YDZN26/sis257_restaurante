@@ -3,11 +3,9 @@ import { ref } from 'vue'
 import http from '@/plugins/axios'
 import router from '@/router'
 
-
 const props = defineProps<{
   ENDPOINT_API: string
 }>()
-
 
 const ENDPOINT = props.ENDPOINT_API ?? ''
 const usuario = ref('')
@@ -19,7 +17,7 @@ async function crearUsuario() {
     .post(ENDPOINT, {
       usuario: usuario.value,
       //clave: clave.value,
-      email: email.value,
+      email: email.value
     })
     .then(() => router.push('/usuarios'))
 }
@@ -49,7 +47,13 @@ function goBack() {
     <div class="row">
       <form @submit.prevent="crearUsuario">
         <div class="form-floating mb-3">
-          <input type="string" class="form-control" v-model="usuario" placeholder="usuario" required />
+          <input
+            type="string"
+            class="form-control"
+            v-model="usuario"
+            placeholder="usuario"
+            required
+          />
           <label for="usuario">usuario</label>
         </div>
         <!-- <div class="form-floating mb-3">

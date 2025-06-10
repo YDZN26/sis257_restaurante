@@ -27,7 +27,10 @@ export class PlatillosService {
     return platillo;
   }
 
-  async update(id: number, updatePlatilloDto: UpdatePlatilloDto): Promise<Platillo> {
+  async update(
+    id: number,
+    updatePlatilloDto: UpdatePlatilloDto,
+  ): Promise<Platillo> {
     const platillo = await this.findOne(id);
     const actualizado = Object.assign(platillo, updatePlatilloDto);
     return this.platilloRepository.save(actualizado);

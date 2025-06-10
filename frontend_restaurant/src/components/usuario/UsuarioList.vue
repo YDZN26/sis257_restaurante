@@ -62,7 +62,11 @@ onMounted(() => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(usuario, index) in usuarios" :key="usuario.id" style="background-color: black">
+          <tr
+            v-for="(usuario, index) in usuarios"
+            :key="usuario.id"
+            style="background-color: black"
+          >
             <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
             <td align="center" style="color: #f8cb2e">{{ usuario.id }}</td>
             <td style="color: #f8cb2e">{{ usuario.usuario }}</td>
