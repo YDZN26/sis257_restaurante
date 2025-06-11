@@ -1,26 +1,80 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDetalleDto } from './dto/create-detalle.dto';
 import { UpdateDetalleDto } from './dto/update-detalle.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Detalle } from './entities/detalle.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DetallesService {
-  create(createDetalleDto: CreateDetalleDto) {
-    return 'This action adds a new detalle';
+  constructor(
+    @InjectRepository(Detalle)
+    private detalleRepository: Repository<Detalle>,
+  ) {}
+  async create(createDetalleDto: CreateDetalleDto): Promise<Detalle> {
+    const existe = await this.detalleRepository.findOneBy({
+      direccionEstado: createDetalleDto.direccionEstado.trim(),
+      puntuacion: createDetalleDto.puntuacion.trim(),
+      credibilidad: createDetalleDto.credibilidad.trim(),
+      amabilidad: createDetalleDto.amabilidad.trim(),
+      idPedido: createDetalleDto.idPedido,
+      idCliente: createDetalleDto.idCliente,
+    });
+
+    if (existe) {
+      throw new ConflictException(
+        `La dirección del pedido ${createDetalleDto.direccionEstado} ya existe.`,
+      );
+    }
+
+    return this.detalleRepository.save({
+      direccionEstado: createDetalleDto.direccionEstado.trim(),
+      puntuacion: createDetalleDto.puntuacion.trim(),
+      credibilidad: createDetalleDto.credibilidad.trim(),
+      amabilidad: createDetalleDto.amabilidad.trim(),
+      idPedido: createDetalleDto.idPedido,
+      idCliente: createDetalleDto.idCliente,
+    });
   }
 
-  findAll() {
-    return `This action returns all detalles`;
+  async findAll(): Promise<Detalle[]> {
+    return this.detalleRepository.find({
+      relations: { pedidos: true, clientes:true }, //referencia al entity
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} detalle`;
+  async findOne(id: number): Promise<Detalle> {
+    const detalle = await this.detalleRepository.findOne({
+      where: { id },
+      relations: { pedidos: true, clientes:true },
+    });
+
+    if (!detalle) {
+      throw new NotFoundException(`El detalle ${id} no existe.`);
+    }
+
+    return detalle;
   }
 
-  update(id: number, updateDetalleDto: UpdateDetalleDto) {
-    return `This action updates a #${id} detalle`;
+  async update(
+    id: number,
+    updateDetalleDto: UpdateDetalleDto,
+  ): Promise<Detalle> {
+    const detalle = await this.detalleRepository.findOneBy({ id });
+    if (!detalle) {
+      throw new NotFoundException(`El detalle ${id} no existe.`);
+    }
+    const detalleUpdate = Object.assign(detalle, updateDetalleDto);
+    return this.detalleRepository.save(detalleUpdate);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} detalle`;
+  async remove(id: number) {
+    const existe = await this.detalleRepository.findOneBy({ id });
+
+    if (!existe) {
+      throw new NotFoundException(`El detalle ${id} no existe.`);
+    }
+
+    return this.detalleRepository.delete(id);
   }
 }
