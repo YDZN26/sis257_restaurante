@@ -76,10 +76,6 @@ function goBack() {
           />
           <label for="carnetIdentidad">Carnet de Identidad</label>
         </div>
-        <div class="form-floating mb-3">
-          <input type="Date" class="form-control" v-model="fechaEdad" placeholder="Edad" required />
-          <label for="fechaEdad">Fecha de Nacimiento</label>
-        </div>
 
         <div class="form-floating mb-3">
           <input

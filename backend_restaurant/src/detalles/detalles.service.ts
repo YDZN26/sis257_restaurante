@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDetalleDto } from './dto/create-detalle.dto';
 import { UpdateDetalleDto } from './dto/update-detalle.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -39,14 +43,14 @@ export class DetallesService {
 
   async findAll(): Promise<Detalle[]> {
     return this.detalleRepository.find({
-      relations: { pedidos: true, clientes:true }, //referencia al entity
+      relations: { pedidos: true, clientes: true }, //referencia al entity
     });
   }
 
   async findOne(id: number): Promise<Detalle> {
     const detalle = await this.detalleRepository.findOne({
       where: { id },
-      relations: { pedidos: true, clientes:true },
+      relations: { pedidos: true, clientes: true },
     });
 
     if (!detalle) {

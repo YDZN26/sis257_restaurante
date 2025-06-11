@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlatillosModule } from './platillos/platillos.module';
+import { ClientesModule } from './cliente/clientes.module';
+import { PedidoModule } from './pedidos/pedidos.module';
 
 console.log('DB_HOST:', process.env.DB_HOST);
 @Module({
@@ -20,6 +22,8 @@ console.log('DB_HOST:', process.env.DB_HOST);
       synchronize: true,
     }),
     PlatillosModule,
+    ClientesModule,
+    PedidoModule,
   ],
 })
 export class AppModule {}

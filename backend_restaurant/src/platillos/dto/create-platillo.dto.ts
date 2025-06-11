@@ -16,4 +16,8 @@ export class CreatePlatilloDto {
   @IsNotEmpty()
   @IsString()
   tiempoPreparacion: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  disponibilidad: number;
 }

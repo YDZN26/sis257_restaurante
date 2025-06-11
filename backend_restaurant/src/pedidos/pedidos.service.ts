@@ -18,7 +18,9 @@ export class PedidoService {
   }
 
   findAll(): Promise<Pedido[]> {
-    return this.pedidoRepository.find();
+    return this.pedidoRepository.find({
+      relations: ['repartidor', 'cliente', 'direccion'],
+    });
   }
 
   async findOne(id: number): Promise<Pedido> {

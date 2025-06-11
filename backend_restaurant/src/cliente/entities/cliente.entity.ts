@@ -1,19 +1,30 @@
-import { Column, CreateDateColumn, Entity,  PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('clientes')
 export class Cliente {
-    @PrimaryGeneratedColumn()
-    id:number;
+  @PrimaryGeneratedColumn()
+  @ApiProperty()
+  id: number;
 
-    @Column('varchar',{length:10})x
-    nombreCliente: string;
+  @Column('varchar', { length: 50 })
+  @ApiProperty()
+  nombreCliente: string;
 
-    @Column('integer',{name: 'carnetIdentidad'})
-    carnetIdentidad: number;
+  @Column('varchar', { length: 10 })
+  @ApiProperty()
+  carnetIdentidad: string;
 
-    @Column('integer',{name:'celular'})
-    celular:number;
+  @Column('int')
+  @ApiProperty()
+  celular: number;
 
-    @CreateDateColumn({name:'fecha_creacion'})
-    fechaCreacion:Date;
+  @CreateDateColumn({ name: 'fecha_creacion' })
+  @ApiProperty()
+  fechaCreacion: Date;
 }

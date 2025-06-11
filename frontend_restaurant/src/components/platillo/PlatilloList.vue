@@ -78,7 +78,7 @@ onMounted(() => {
           </thead>
           <tbody>
             <tr
-              v-for="(platillo, index) in platillos.values()"
+              <tr v-for="(platillo, index) in platillos"
               :key="platillo.id"
               style="background-color: black"
             >
@@ -87,7 +87,6 @@ onMounted(() => {
               <!--cuando el intex comienza en 0 le damos mas 1-->
               <td align="center" style="color: #f8cb2e">{{ platillo.id }}</td>
               <td style="color: #f8cb2e">{{ platillo.nombre }}</td>
-              <td style="color: #f8cb2e">{{ platillo.urlPlatillo }}</td>
               <td style="color: #f8cb2e">{{ platillo.precio }}</td>
               <td style="color: #f8cb2e">{{ platillo.tiempoPreparacion }}</td>
               <td style="color: #f8cb2e">{{ platillo.disponibilidad }}</td>
@@ -125,11 +124,6 @@ onMounted(() => {
       <div v-for="p in platillos" class="col-md-4">
         <div class="product-item">
           <a href="#">
-            <img
-              :src="p.urlPlatillo"
-              alt="Platillo"
-              style="width: 232px; height: 232px; border: 1px solid black; border-radius: 10px"
-            />
           </a>
           <div v-if="p.disponibilidad >= 1">
             <div class="down-content">

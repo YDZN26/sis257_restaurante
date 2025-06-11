@@ -89,7 +89,8 @@ onMounted(() => {
               <td style="color: #f8cb2e">{{ clientes.nombreCliente }}</td>
               <td style="color: #f8cb2e">{{ clientes.carnetIdentidad }}</td>
               <td style="color: #f8cb2e">
-                {{ new Date(clientes.fechaEdad).toLocaleDateString('es-ES') }}
+                {{ new Date(clientes.fechaCreacion).toLocaleDateString('es-ES') }}
+
               </td>
               <td style="color: #f8cb2e">{{ clientes.celular }}</td>
               <td>

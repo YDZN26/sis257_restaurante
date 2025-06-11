@@ -2,7 +2,7 @@
 
 <template>
   <br /><br />
-  <RouterView ENDPOINT_API="pedido"></RouterView
+  <RouterView ENDPOINT_API="pedidos"></RouterView
   ><!--link de swgager-->
 </template>
 

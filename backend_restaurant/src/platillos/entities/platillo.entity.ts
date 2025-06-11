@@ -22,4 +22,8 @@ export class Platillo {
   @Column({ length: 50 })
   @ApiProperty()
   tiempoPreparacion: string;
+
+  @Column('int', { default: 1 })
+  @ApiProperty()
+  disponibilidad: number;
 }

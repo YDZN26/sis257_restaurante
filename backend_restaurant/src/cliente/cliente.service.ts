@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,7 +20,6 @@ export class ClientesService {
       nombreCliente: createClienteDto.nombreCliente.trim(),
       carnetIdentidad: createClienteDto.carnetIdentidad,
       celular: createClienteDto.celular,
-
     });
 
     if (existeCliente) {
@@ -33,8 +36,7 @@ export class ClientesService {
   }
 
   async findAll(): Promise<Cliente[]> {
-    return this.clienteRepository.find({
-    });
+    return this.clienteRepository.find({});
   }
 
   async findOne(id: number): Promise<Cliente> {

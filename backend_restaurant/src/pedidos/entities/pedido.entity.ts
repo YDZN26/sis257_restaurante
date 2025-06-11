@@ -1,5 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+
+import { Repartidor } from 'src/repartidor/entities/repartidor.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { Direccione } from 'src/direcciones/entities/direccione.entity';
 
 @Entity('pedidos')
 export class Pedido {
@@ -19,15 +29,18 @@ export class Pedido {
   @ApiProperty()
   fechaPedido: string;
 
-  @Column()
-  @ApiProperty()
-  id_repartidor: number;
+  @ManyToOne(() => Repartidor)
+  @JoinColumn({ name: 'id_repartidor' })
+  @ApiProperty({ type: () => Repartidor })
+  repartidor: Repartidor;
 
-  @Column()
-  @ApiProperty()
-  id_cliente: number;
+  @ManyToOne(() => Cliente)
+  @JoinColumn({ name: 'id_cliente' })
+  @ApiProperty({ type: () => Cliente })
+  cliente: Cliente;
 
-  @Column()
-  @ApiProperty()
-  id_direccion: number;
+  @ManyToOne(() => Direccione)
+  @JoinColumn({ name: 'id_direccion' })
+  @ApiProperty({ type: () => Direccione })
+  direccion: Direccione;
 }
