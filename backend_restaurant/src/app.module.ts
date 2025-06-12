@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlatillosModule } from './platillos/platillos.module';
 import { ClientesModule } from './cliente/clientes.module';
 import { PedidoModule } from './pedidos/pedidos.module';
+import { AuthModule } from './auth/auth.module';
 
 console.log('DB_HOST:', process.env.DB_HOST);
 @Module({
@@ -23,6 +24,7 @@ console.log('DB_HOST:', process.env.DB_HOST);
     PlatillosModule,
     ClientesModule,
     PedidoModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

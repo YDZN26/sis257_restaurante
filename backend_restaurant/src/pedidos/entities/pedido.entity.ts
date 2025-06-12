@@ -9,7 +9,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Repartidor } from 'src/repartidor/entities/repartidor.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
-import { Direccione } from 'src/direcciones/entities/direccione.entity';
+import { Direccion } from 'src/direcciones/entities/direcciones.entity';
 
 @Entity('pedidos')
 export class Pedido {
@@ -39,8 +39,8 @@ export class Pedido {
   @ApiProperty({ type: () => Cliente })
   cliente: Cliente;
 
-  @ManyToOne(() => Direccione)
+  @ManyToOne(() => Direccion)
   @JoinColumn({ name: 'id_direccion' })
-  @ApiProperty({ type: () => Direccione })
-  direccion: Direccione;
+  @ApiProperty({ type: () => Direccion })
+  direccion: Direccion;
 }

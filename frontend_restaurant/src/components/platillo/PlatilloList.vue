@@ -69,15 +69,13 @@ onMounted(() => {
               <th scope="col" style="color: #e49e48">N°</th>
               <th scope="col" style="color: #e49e48">Orden de Creacion</th>
               <th scope="col" style="color: #e49e48">Nombre del Platillo</th>
-              <th scope="col" style="color: #e49e48">url del Platillo</th>
               <th scope="col" style="color: #e49e48">Precio</th>
-              <th scope="col" style="color: #e49e48">Tiempo de Preparación</th>
-              <th scope="col" style="color: #e49e48">Disponibilidad</th>
+              <th scope="col" style="color: #e49e48">Tiempo de Preparación (min)</th>
+              <th scope="col" style="color: #e49e48">Platillos Disponibles</th>
               <th scope="col" style="color: #e49e48">Editar/Eliminar</th>
             </tr>
           </thead>
           <tbody>
-            <tr
               <tr v-for="(platillo, index) in platillos"
               :key="platillo.id"
               style="background-color: black"

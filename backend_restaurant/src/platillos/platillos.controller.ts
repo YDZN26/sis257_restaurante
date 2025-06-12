@@ -17,6 +17,7 @@ export class PlatillosController {
 
   @Post()
   create(@Body() createPlatilloDto: CreatePlatilloDto) {
+    console.log('Body recibido:', createPlatilloDto);
     return this.platillosService.create(createPlatilloDto);
   }
 

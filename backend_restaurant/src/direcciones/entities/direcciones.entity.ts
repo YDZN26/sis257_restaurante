@@ -1,25 +1,29 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('repartidores') // o el nombre real de tu tabla
-export class Repartidor {
+@Entity('direcciones')
+export class Direccion {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
 
-  @Column({ length: 100 })
+  @Column({ length: 150 })
   @ApiProperty()
-  nombreRepartidor: string;
+  direccion: string;
 
   @Column({ length: 20 })
   @ApiProperty()
-  carnetIdentidad: string;
+  piso: string;
+
+  @Column({ length: 100 })
+  @ApiProperty()
+  indicaciones: string;
+
+  @Column()
+  @ApiProperty()
+  estado: boolean;
 
   @Column({ type: 'date' })
   @ApiProperty()
-  fechaNacimiento: Date;
-
-  @Column({ type: 'date' })
-  @ApiProperty()
-  fechaIngreso: Date;
+  fecha_registro: Date;
 }

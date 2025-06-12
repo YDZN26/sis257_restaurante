@@ -6,12 +6,10 @@ import { Pedido } from './entities/pedido.entity';
 
 import { Repartidor } from 'src/repartidor/entities/repartidor.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
-import { Direccione } from 'src/direcciones/entities/direccione.entity';
+import { Direccion } from 'src/direcciones/entities/direcciones.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Pedido, Repartidor, Cliente, Direccione]),
-  ],
+  imports: [TypeOrmModule.forFeature([Pedido, Repartidor, Cliente, Direccion])],
   controllers: [PedidoController],
   providers: [PedidoService],
 })

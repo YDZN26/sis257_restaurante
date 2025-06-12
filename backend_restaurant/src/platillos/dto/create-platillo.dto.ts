@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreatePlatilloDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  idPlatillo: string;
+  idPlatillo?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -14,8 +14,8 @@ export class CreatePlatilloDto {
   precio: number;
 
   @IsNotEmpty()
-  @IsString()
-  tiempoPreparacion: string;
+  @IsNumber()
+  tiempoPreparacion: number;
 
   @IsNotEmpty()
   @IsNumber()

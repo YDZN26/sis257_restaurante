@@ -13,9 +13,13 @@ export class PlatillosService {
   ) {}
 
   create(createPlatilloDto: CreatePlatilloDto): Promise<Platillo> {
-    const nuevo = this.platilloRepository.create(createPlatilloDto);
-    return this.platilloRepository.save(nuevo);
-  }
+    const nuevo = this.platilloRepository.create({
+      ...createPlatilloDto,
+      idPlatillo: `P-${Date.now()}`,
+    });
+  return this.platilloRepository.save(nuevo);
+}
+
 
   findAll(): Promise<Platillo[]> {
     return this.platilloRepository.find();

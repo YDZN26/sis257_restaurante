@@ -19,9 +19,9 @@ export class Platillo {
   @ApiProperty()
   precio: number;
 
-  @Column({ length: 50 })
+  @Column()
   @ApiProperty()
-  tiempoPreparacion: string;
+  tiempoPreparacion: number;
 
   @Column('int', { default: 1 })
   @ApiProperty()

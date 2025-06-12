@@ -1,20 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ClienteController } from './cliente.controller';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ClientesService } from './cliente.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-describe('ClienteController', () => {
-  let controller: ClienteController;
+@UseGuards(JwtAuthGuard) // <- esto protege todas las rutas
+@Controller('clientes')
+export class ClienteController {
+  constructor(private readonly clientesService: ClientesService) {}
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [ClienteController],
-      providers: [ClientesService],
-    }).compile();
+  @Get()
+  findAll() {
+    return this.clientesService.findAll();
+  }
 
-    controller = module.get<ClienteController>(ClienteController);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+  // puedes proteger también métodos individualmente si prefieres:
+  // @UseGuards(JwtAuthGuard)
+  // @Get('privado')
+  // findPrivado() { ... }
+}
