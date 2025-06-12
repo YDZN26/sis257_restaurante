@@ -79,7 +79,7 @@
           <h5 class="site-footer-title mb-3">¿Alguna pregunta?</h5>
 
           <p class="text-white d-flex mb-1">
-            <a href="tel: 090-080-0760" class="site-footer-link"> +591 68613999 </a>
+            <a href="tel: 090-080-0760" class="site-footer-link"> +591 74848844 </a>
           </p>
 
           <p class="text-white d-flex">
@@ -98,7 +98,7 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-3 col-12 mt-5">
-            <p class="copyright-text">Copyright © 2023 Bryan & Daniela</p>
+            <p class="copyright-text">Copyright © 2025 Daniel - Amada - Jhojan</p>
           </div>
         </div>
       </div>
