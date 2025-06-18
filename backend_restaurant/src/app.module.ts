@@ -5,6 +5,8 @@ import { PlatillosModule } from './platillos/platillos.module';
 import { ClientesModule } from './cliente/clientes.module';
 import { PedidoModule } from './pedidos/pedidos.module';
 import { AuthModule } from './auth/auth.module';
+import { DireccionesModule } from './direcciones/direcciones.module';
+import { RepartidorModule } from './repartidor/repartidor.module';
 
 console.log('DB_HOST:', process.env.DB_HOST);
 @Module({
@@ -25,6 +27,8 @@ console.log('DB_HOST:', process.env.DB_HOST);
     ClientesModule,
     PedidoModule,
     AuthModule,
+    DireccionesModule,
+    RepartidorModule,
   ],
 })
 export class AppModule {}

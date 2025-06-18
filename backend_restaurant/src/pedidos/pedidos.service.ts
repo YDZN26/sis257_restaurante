@@ -12,26 +12,50 @@ export class PedidoService {
     private readonly pedidoRepository: Repository<Pedido>,
   ) {}
 
-  create(createPedidoDto: CreatePedidoDto): Promise<Pedido> {
-    const nuevo = this.pedidoRepository.create(createPedidoDto);
+  async create(createPedidoDto: CreatePedidoDto): Promise<Pedido> {
+    const nuevo = this.pedidoRepository.create({
+      cantidad: createPedidoDto.cantidad,
+      total: createPedidoDto.total,
+      fechaPedido: createPedidoDto.fechaPedido,
+      repartidor: { id: createPedidoDto.idRepartidor },
+      cliente: { id: createPedidoDto.idCliente },
+      direccion: { id: createPedidoDto.idDireccion },
+      platillo: { id: createPedidoDto.idPlatillo },
+    });
+
     return this.pedidoRepository.save(nuevo);
   }
 
   findAll(): Promise<Pedido[]> {
     return this.pedidoRepository.find({
-      relations: ['repartidor', 'cliente', 'direccion'],
+      relations: ['repartidor', 'cliente', 'direccion', 'platillo'],
     });
   }
 
   async findOne(id: number): Promise<Pedido> {
-    const pedido = await this.pedidoRepository.findOne({ where: { id } });
+    const pedido = await this.pedidoRepository.findOne({
+      where: { id },
+      relations: ['repartidor', 'cliente', 'direccion', 'platillo'],
+    });
+
     if (!pedido) throw new NotFoundException('Pedido no encontrado');
     return pedido;
   }
 
   async update(id: number, updatePedidoDto: UpdatePedidoDto): Promise<Pedido> {
-    const pedido = await this.findOne(id);
-    const actualizado = Object.assign(pedido, updatePedidoDto);
+    const pedidoExistente = await this.findOne(id);
+
+    const actualizado = this.pedidoRepository.create({
+      ...pedidoExistente,
+      cantidad: updatePedidoDto.cantidad,
+      total: updatePedidoDto.total,
+      fechaPedido: updatePedidoDto.fechaPedido,
+      repartidor: { id: updatePedidoDto.idRepartidor },
+      cliente: { id: updatePedidoDto.idCliente },
+      direccion: { id: updatePedidoDto.idDireccion },
+      platillo: { id: updatePedidoDto.idPlatillo },
+    });
+
     return this.pedidoRepository.save(actualizado);
   }
 

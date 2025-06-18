@@ -12,7 +12,7 @@ const authStore = useAuthStore()
         <p class="d-flex me-4 mb-0">
           <i class="bi-person custom-icon me-2" style="color: #e49e48"></i>
           <strong style="color: #e49e48"
-            >Bienvenido al área de administración de los repartidores del restaurante QUE
+            >Bienvenido al área de administración del restaurante QUE
             RICO!</strong
           >
         </p>

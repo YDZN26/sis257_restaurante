@@ -10,6 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Repartidor } from 'src/repartidor/entities/repartidor.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { Direccion } from 'src/direcciones/entities/direcciones.entity';
+import { Platillo } from 'src/platillos/entities/platillo.entity';
 
 @Entity('pedidos')
 export class Pedido {
@@ -29,18 +30,19 @@ export class Pedido {
   @ApiProperty()
   fechaPedido: string;
 
-  @ManyToOne(() => Repartidor)
-  @JoinColumn({ name: 'id_repartidor' })
-  @ApiProperty({ type: () => Repartidor })
+  @ManyToOne(() => Repartidor, { eager: false })
+  @JoinColumn({ name: 'idRepartidor' })
   repartidor: Repartidor;
 
-  @ManyToOne(() => Cliente)
-  @JoinColumn({ name: 'id_cliente' })
-  @ApiProperty({ type: () => Cliente })
+  @ManyToOne(() => Cliente, { eager: false })
+  @JoinColumn({ name: 'idCliente' })
   cliente: Cliente;
 
-  @ManyToOne(() => Direccion)
-  @JoinColumn({ name: 'id_direccion' })
-  @ApiProperty({ type: () => Direccion })
+  @ManyToOne(() => Direccion, { eager: false })
+  @JoinColumn({ name: 'idDireccion' })
   direccion: Direccion;
+
+  @ManyToOne(() => Platillo, { eager: false })
+  @JoinColumn({ name: 'idPlatillo' })
+  platillo: Platillo;
 }

@@ -24,7 +24,7 @@ const indicaciones = ref('')
 const estado = ref('')
 const idCliente = ref('')
 
-async function crearValoracion() {
+async function crearDireccion() {
   await http
     .post(ENDPOINT, {
       direccion: direccion.value,
@@ -66,7 +66,7 @@ function goBack() {
     </div>
 
     <div class="row">
-      <form @submit.prevent="crearValoracion">
+      <form @submit.prevent="crearDireccion">
         <!--cuando yo aprete guardar me llma al metodo crearValoracion-->
         <div class="form-floating mb-3">
           <input
@@ -94,7 +94,7 @@ function goBack() {
         </div>
         <div class="form-floating mb-3">
           <input type="text" class="form-control" v-model="estado" placeholder="estado" required />
-          <label for="estado">Estado</label>
+          <label for="estado">Ciudad</label>
         </div>
 
         <div class="form-floating mb-3">
@@ -108,7 +108,7 @@ function goBack() {
 
         <div class="text-center mt-3">
           <button type="submit" class="btn btn-primary btn-lg">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Crear Valoración
+            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Crear Direccion
           </button>
         </div>
       </form>

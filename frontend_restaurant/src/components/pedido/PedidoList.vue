@@ -66,7 +66,6 @@ onMounted(() => {
           <thead>
             <tr style="background-color: black">
               <th scope="col" style="color: #e49e48">N°</th>
-              <th scope="col" style="color: #e49e48">Orden del Pedido</th>
               <th scope="col" style="color: #e49e48">Nombre del Repartidor</th>
               <th scope="col" style="color: #e49e48">Nombre Cliente</th>
               <th scope="col" style="color: #e49e48">Nombre de la Dirección</th>
@@ -80,11 +79,10 @@ onMounted(() => {
           <tbody>
             <tr v-for="(pedido, index) in pedidos" :key="pedido.id" style="background-color: black">
               <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
-              <td align="center" style="color: #f8cb2e">{{ pedido.id }}</td>
-              <td style="color: #f8cb2e">{{ pedido.repartidor.nombreRepartidor }}</td>
-              <td style="color: #f8cb2e">{{ pedido.clientes.nombreCliente }}</td>
-              <td style="color: #f8cb2e">{{ pedido.direcciones.direccion }}</td>
-              <td style="color: #f8cb2e">{{ pedido.platillos.nombre }}</td>
+              <td style="color: #f8cb2e">{{ pedido.repartidor?.nombreRepartidor }}</td>
+              <td style="color: #f8cb2e">{{ pedido.cliente?.nombreCliente }}</td>
+              <td style="color: #f8cb2e">{{ pedido.direccion?.direccion }}</td>
+              <td style="color: #f8cb2e">{{ pedido.platillo?.nombre }}</td>
               <td style="color: #f8cb2e">{{ pedido.cantidad }}</td>
               <td style="color: #f8cb2e">{{ pedido.total }}</td>
               <td style="color: #f8cb2e">{{ pedido.fechaPedido }}</td>

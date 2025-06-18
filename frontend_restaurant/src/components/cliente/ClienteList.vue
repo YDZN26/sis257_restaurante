@@ -68,10 +68,9 @@ onMounted(() => {
           <thead>
             <tr style="background-color: black">
               <th scope="col" style="color: #e49e48">N°</th>
-              <th scope="col" style="color: #e49e48">Registro de Clientes</th>
               <th scope="col" style="color: #e49e48">Nombre del Cliente</th>
               <th scope="col" style="color: #e49e48">Carnet</th>
-              <th scope="col" style="color: #e49e48">Edad</th>
+              <th scope="col" style="color: #e49e48">Fecha de Registro</th>
               <th scope="col" style="color: #e49e48">Celular</th>
               <th scope="col" style="color: #e49e48">Editar/Eliminar</th>
             </tr>
@@ -85,7 +84,6 @@ onMounted(() => {
               <!--el singular solo es una variable-->
               <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
               <!--cuando el intex comienza en 0 le damos mas 1-->
-              <td align="center" style="color: #f8cb2e">{{ clientes.id }}</td>
               <td style="color: #f8cb2e">{{ clientes.nombreCliente }}</td>
               <td style="color: #f8cb2e">{{ clientes.carnetIdentidad }}</td>
               <td style="color: #f8cb2e">

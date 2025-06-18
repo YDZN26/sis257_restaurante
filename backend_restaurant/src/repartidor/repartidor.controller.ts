@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { RepartidorService } from './repartidor.service';
 import { CreateRepartidorDto } from './dto/create-repartidor.dto';
@@ -16,8 +17,8 @@ export class RepartidorController {
   constructor(private readonly repartidorService: RepartidorService) {}
 
   @Post()
-  create(@Body() createRepartidorDto: CreateRepartidorDto) {
-    return this.repartidorService.create(createRepartidorDto);
+  create(@Body() dto: CreateRepartidorDto) {
+    return this.repartidorService.create(dto);
   }
 
   @Get()
@@ -26,20 +27,20 @@ export class RepartidorController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.repartidorService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.repartidorService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @Body() updateRepartidorDto: UpdateRepartidorDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateRepartidorDto,
   ) {
-    return this.repartidorService.update(+id, updateRepartidorDto);
+    return this.repartidorService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.repartidorService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.repartidorService.remove(id);
   }
 }

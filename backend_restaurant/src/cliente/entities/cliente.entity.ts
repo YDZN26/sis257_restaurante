@@ -1,3 +1,5 @@
+import { Direccion } from '../../direcciones/entities/direcciones.entity'; // ajusta la ruta si es necesario
+import { OneToMany } from 'typeorm';
 import {
   Column,
   CreateDateColumn,
@@ -27,4 +29,7 @@ export class Cliente {
   @CreateDateColumn({ name: 'fecha_creacion' })
   @ApiProperty()
   fechaCreacion: Date;
+
+  @OneToMany(() => Direccion, (direccion) => direccion.cliente)
+  direcciones: Direccion[];
 }

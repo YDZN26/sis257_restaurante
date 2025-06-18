@@ -1,30 +1,31 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber, IsDateString, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsDateString } from 'class-validator';
 
 export class CreatePedidoDto {
-  @IsInt()
-  @Min(1)
-  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
   cantidad: number;
 
+  @IsNotEmpty()
   @IsNumber()
-  @Min(0)
-  @ApiProperty()
   total: number;
 
+  @IsNotEmpty()
   @IsDateString()
-  @ApiProperty()
   fechaPedido: string;
 
-  @IsInt()
-  @ApiProperty()
-  id_repartidor: number;
+  @IsNotEmpty()
+  @IsNumber()
+  idRepartidor: number;
 
-  @IsInt()
-  @ApiProperty()
-  id_cliente: number;
+  @IsNotEmpty()
+  @IsNumber()
+  idCliente: number;
 
-  @IsInt()
-  @ApiProperty()
-  id_direccion: number;
+  @IsNotEmpty()
+  @IsNumber()
+  idDireccion: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  idPlatillo: number;
 }

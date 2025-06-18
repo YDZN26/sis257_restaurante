@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Cliente } from '../../cliente/entities/cliente.entity'; // ajusta el path si es diferente
 
 @Entity('direcciones')
 export class Direccion {
@@ -26,4 +33,8 @@ export class Direccion {
   @Column({ type: 'date' })
   @ApiProperty()
   fecha_registro: Date;
+
+  @ManyToOne(() => Cliente, (cliente) => cliente.direcciones, { eager: false })
+  @JoinColumn({ name: 'idCliente' })
+  cliente: Cliente;
 }

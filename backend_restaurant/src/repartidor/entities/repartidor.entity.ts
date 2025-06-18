@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('repartidores') // o el nombre real de tu tabla
+@Entity('repartidor')
 export class Repartidor {
   @PrimaryGeneratedColumn()
   @ApiProperty()
@@ -17,9 +17,13 @@ export class Repartidor {
 
   @Column({ type: 'date' })
   @ApiProperty()
-  fechaNacimiento: Date;
+  fechaEdad: Date;
 
   @Column({ type: 'date' })
   @ApiProperty()
   fechaIngreso: Date;
+
+  @Column({ default: true })
+  @ApiProperty()
+  estado: boolean;
 }
