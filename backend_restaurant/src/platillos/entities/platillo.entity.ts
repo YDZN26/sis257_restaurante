@@ -1,29 +1,32 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { CategoriaPlatillo } from '../../categoria_platillos/entities/categoria_platillo.entity';
 
 @Entity('platillos')
 export class Platillo {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
   id: number;
 
   @Column({ length: 100 })
-  @ApiProperty()
   nombre: string;
 
-  @Column({ length: 50 })
-  @ApiProperty()
-  idPlatillo: string;
-
   @Column('decimal', { precision: 10, scale: 2 })
-  @ApiProperty()
   precio: number;
 
-  @Column()
-  @ApiProperty()
-  tiempoPreparacion: number;
+  @Column('int')
+  stock: number;
 
-  @Column('int', { default: 1 })
-  @ApiProperty()
-  disponibilidad: number;
+  @Column({ type: 'varchar', length: 100 })
+  tiempo_preparacion: string;
+
+  @ManyToOne(() => CategoriaPlatillo)
+  categoria: CategoriaPlatillo;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  fecha_creacion: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  fecha_modificacion: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  fecha_eliminacion: Date;
 }

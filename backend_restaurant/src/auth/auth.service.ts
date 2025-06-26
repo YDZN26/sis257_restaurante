@@ -1,38 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Usuario } from '../usuarios/entities/usuario.entity';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    @InjectRepository(Usuario)
+    private readonly usuarioRepo: Repository<Usuario>,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  // Validación de usuario "manual" (usuario codificado)
-  validateUser(usuario: string, clave: string): JwtUser | null {
-    if (usuario === 'qrico123' && clave === 'hola123') {
-      return {
-        username: 'qrico123',
-        email: 'qrico@gmail.com',
-        rol: 'administrador',
-      };
+  async login(
+    dto: LoginDto,
+  ): Promise<{ access_token: string; usuario: string }> {
+    const user = await this.usuarioRepo.findOneBy({
+      usuario_login: dto.usuario_login,
+      clave: dto.clave,
+    });
+
+    if (!user || user.fecha_eliminacion) {
+      throw new UnauthorizedException('Credenciales inválidas');
     }
-    return null;
-  }
 
-  login(user: JwtUser) {
-    const payload = {
-      username: user.username,
-      sub: user.email,
-      rol: user.rol,
-    };
+    const payload = { sub: user.id, rol: user.rol };
+    const access_token = await this.jwtService.signAsync(payload);
     return {
-      access_token: this.jwtService.sign(payload),
-      usuario: user.username,
+      access_token,
+      usuario: user.usuario_login,
     };
   }
-}
-
-// Interfaz local para tipado del usuario
-interface JwtUser {
-  username: string;
-  email: string;
-  rol: string;
 }

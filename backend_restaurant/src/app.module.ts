@@ -2,13 +2,17 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlatillosModule } from './platillos/platillos.module';
-import { ClientesModule } from './cliente/clientes.module';
-import { PedidoModule } from './pedidos/pedidos.module';
 import { AuthModule } from './auth/auth.module';
+import { CategoriaPlatillosModule } from './categoria_platillos/categoria_platillos.module';
+import { ClienteModule } from './clientes/clientes.module'; // ✅ correcto
 import { DireccionesModule } from './direcciones/direcciones.module';
-import { RepartidorModule } from './repartidor/repartidor.module';
+import { EmpleadosModule } from './empleados/empleados.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { PedidoModule } from './pedidos/pedidos.module';
+import { DetallePedidosModule } from './detalle_pedidos/detalle_pedidos.module';
 
 console.log('DB_HOST:', process.env.DB_HOST);
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -19,16 +23,19 @@ console.log('DB_HOST:', process.env.DB_HOST);
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [__dirname + '*/**/entities/*.{ts|js}'],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
       synchronize: true,
     }),
     PlatillosModule,
-    ClientesModule,
-    PedidoModule,
     AuthModule,
+    CategoriaPlatillosModule,
+    ClienteModule, // ✅ aquí se importa correctamente el módulo
     DireccionesModule,
-    RepartidorModule,
+    EmpleadosModule,
+    UsuariosModule,
+    PedidoModule,
+    DetallePedidosModule,
   ],
 })
 export class AppModule {}

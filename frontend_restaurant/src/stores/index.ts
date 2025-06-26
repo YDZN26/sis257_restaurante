@@ -13,7 +13,7 @@ const useAuthStore = defineStore('auth', {
   getters: {},
   actions: {
     async login(usuario: string, clave: string) {
-      await http.post('auth/login', { usuario, clave }).then((response) => {
+      await http.post('auth/login', { usuario_login: usuario, clave }).then((response) => {
         this.user = response.data.usuario
         this.token = response.data.access_token
 

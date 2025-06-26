@@ -3,25 +3,22 @@ import { ref } from 'vue'
 import http from '@/plugins/axios'
 import router from '@/router'
 
-const props = defineProps<{
-  ENDPOINT_API: string
-}>()
-
-const ENDPOINT = props.ENDPOINT_API ?? ''
-const nombreCliente = ref('')
-const carnetIdentidad = ref('')
-const fechaEdad = ref('')
+const cedula_identidad = ref('')
+const nombre_completo = ref('')
 const celular = ref('')
 
 async function crearCliente() {
-  await http
-    .post(ENDPOINT, {
-      nombreCliente: nombreCliente.value,
-      carnetIdentidad: carnetIdentidad.value,
-      fechaEdad: fechaEdad.value,
+  try {
+    await http.post('clientes', {
+      cedula_identidad: cedula_identidad.value,
+      nombre_completo: nombre_completo.value,
       celular: celular.value
     })
-    .then(() => router.push('/clientes'))
+    router.push('/clientes')
+  } catch (error) {
+    console.error('Error al crear cliente:', error)
+    alert('Ocurrió un error al guardar el cliente.')
+  }
 }
 
 function goBack() {
@@ -30,75 +27,52 @@ function goBack() {
 </script>
 
 <template>
-  <br /><br /><br />
-  <div class="container">
-    <div class="find-us">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="section-heading">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                  <RouterLink to="/">Inicio</RouterLink>
-                </li>
-                <li class="breadcrumb-item">
-                  <RouterLink to="/clientes">Cliente</RouterLink>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">Crear</li>
-              </ol>
-            </nav>
-            <h2>INSERTAR DATOS DEL CLIENTE</h2>
-          </div>
-        </div>
+  <div class="container mt-5">
+    <h2>Crear Cliente</h2>
+    <form @submit.prevent="crearCliente">
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          v-model="cedula_identidad"
+          placeholder="CI"
+          required
+        />
+        <label>Cédula de Identidad</label>
       </div>
-    </div>
-
-    <div class="row">
-      <form @submit.prevent="crearCliente">
-        <!--cuando yo aprete guardar me llma al metodo crearCliente-->
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            v-model="nombreCliente"
-            placeholder="nombreCliente"
-            required
-          />
-          <label for="nombreCliente">Nombre Completo</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            v-model="carnetIdentidad"
-            placeholder="carnetIdentidad"
-            required
-          />
-          <label for="carnetIdentidad">Carnet de Identidad</label>
-        </div>
-
-        <div class="form-floating mb-3">
-          <input
-            type="number"
-            class="form-control"
-            v-model="celular"
-            placeholder="celular"
-            required
-          />
-          <label for="celular">Celular</label>
-        </div>
-
-        <div class="text-center mt-3">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Crear Cliente
-          </button>
-        </div>
-      </form>
-    </div>
-    <div class="text-left">
-      <button class="btn btn-success" @click="goBack">Volver</button>
-    </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          v-model="nombre_completo"
+          placeholder="Nombre"
+          required
+        />
+        <label>Nombre Completo</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          v-model="celular"
+          placeholder="Celular"
+          required
+        />
+        <label>Celular</label>
+      </div>
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-primary">
+          <font-awesome-icon icon="fa-solid fa-save" /> Guardar
+        </button>
+        <button class="btn btn-secondary" @click.prevent="goBack">Volver</button>
+      </div>
+    </form>
   </div>
 </template>
 
-<style></style>
+<style scoped>
+.container {
+  max-width: 600px;
+}
+</style>
+

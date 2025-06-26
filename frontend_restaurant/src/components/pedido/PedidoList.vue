@@ -1,106 +1,171 @@
 <script setup lang="ts">
 import type { Pedido } from '@/models/pedido'
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import http from '@/plugins/axios'
 import router from '@/router'
-import { useAuthStore } from '@/stores/index'
-const authStore = useAuthStore()
 
-const props = defineProps<{
-  ENDPOINT_API: string
-}>()
+const ENDPOINT = 'pedidos'
+const pedidos = ref<Pedido[]>([])
+const busqueda = ref('')
 
-const ENDPOINT = props.ENDPOINT_API ?? ''
-var pedidos = ref<Pedido[]>([])
+const pedidosFiltrados = computed(() => {
+  return pedidos.value.filter(p => {
+    const texto = busqueda.value.toLowerCase()
+    const nombre = p.cliente?.nombre_completo?.toLowerCase() || ''
+    const fecha = new Date(p.fecha_creacion).toLocaleDateString('es-BO').toLowerCase()
+    return nombre.includes(texto) || fecha.includes(texto)
+  })
+})
 
-async function getPedido() {
-  pedidos.value = await http.get(ENDPOINT).then((response) => response.data)
+
+async function getPedidos() {
+  const datos = await http.get(ENDPOINT).then(res => res.data)
+  // Ordenar por fecha_creacion descendente
+  pedidos.value = datos.sort((a: Pedido, b: Pedido) => new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime())
 }
 
-function toEdit(id: number) {
-  router.push(`/pedido/editar/${id}`)
+async function marcarEntregado(id: number) {
+  await http.patch(`${ENDPOINT}/entregar/${id}`) // ✅ Correcto
+  getPedidos()
 }
 
-async function toDelete(id: number) {
-  var r = confirm('¿Está seguro que se desea eliminar el pedido?')
-  if (r == true) {
-    await http.delete(`${ENDPOINT}/${id}`).then(() => getPedido())
-  }
+function formatFecha(fecha: string | Date) {
+  const f = new Date(fecha)
+  return f.toLocaleString('es-BO', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
 onMounted(() => {
-  getPedido()
+  getPedidos()
 })
+
+const pedidoSeleccionado = ref<Pedido | null>(null)
+const mostrarModal = ref(false)
+
+async function verDetalle(id: number) {
+  pedidoSeleccionado.value = await http.get(`${ENDPOINT}/${id}`).then(r => r.data)
+  mostrarModal.value = true
+}
+
+function cerrarModal() {
+  mostrarModal.value = false
+  pedidoSeleccionado.value = null
+}
+
 </script>
 
 <template>
-  <br /><br /><br />
-  <div v-if="authStore.token">
-    <div class="find-us">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="section-heading">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item">
-                    <RouterLink to="/">Inicio</RouterLink>
-                  </li>
-                  <li class="breadcrumb-item active" aria-current="page">Pedidos</li>
-                </ol>
-              </nav>
-              <h2 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
-                Lista de Pedidos
-              </h2>
-              <div class="col-12"></div>
-            </div>
-            <RouterLink to="/pedido/crear">Crear Nuevo Pedido </RouterLink>
-          </div>
-        </div>
-      </div>
-    </div>
-    <br />
-    <div class="container">
-      <div class="table-responsive">
-        <table class="table table-bordered">
-          <thead>
-            <tr style="background-color: black">
-              <th scope="col" style="color: #e49e48">N°</th>
-              <th scope="col" style="color: #e49e48">Nombre del Repartidor</th>
-              <th scope="col" style="color: #e49e48">Nombre Cliente</th>
-              <th scope="col" style="color: #e49e48">Nombre de la Dirección</th>
-              <th scope="col" style="color: #e49e48">Nombre del Platillo</th>
-              <th scope="col" style="color: #e49e48">Cantidad</th>
-              <th scope="col" style="color: #e49e48">Total</th>
-              <th scope="col" style="color: #e49e48">Fecha y Hora del Pedido</th>
-              <th scope="col" style="color: #e49e48">Editar/Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(pedido, index) in pedidos" :key="pedido.id" style="background-color: black">
-              <th scope="row" style="color: #f8cb2e">{{ index + 1 }}</th>
-              <td style="color: #f8cb2e">{{ pedido.repartidor?.nombreRepartidor }}</td>
-              <td style="color: #f8cb2e">{{ pedido.cliente?.nombreCliente }}</td>
-              <td style="color: #f8cb2e">{{ pedido.direccion?.direccion }}</td>
-              <td style="color: #f8cb2e">{{ pedido.platillo?.nombre }}</td>
-              <td style="color: #f8cb2e">{{ pedido.cantidad }}</td>
-              <td style="color: #f8cb2e">{{ pedido.total }}</td>
-              <td style="color: #f8cb2e">{{ pedido.fechaPedido }}</td>
+  <div class="d-flex justify-content-center mt-5 mb-3">
+  <input
+    type="text"
+    v-model="busqueda"
+    class="form-control"
+    placeholder="Buscar por cliente"
+    style="width: 60%"
+  />
+</div>
 
-              <td>
-                <button class="btn text-success" @click="toEdit(pedido.id)">
-                  <font-awesome-icon icon="fa-solid fa-edit" />
-                </button>
-                <button class="btn text-danger" @click="toDelete(pedido.id)">
-                  <font-awesome-icon icon="fa-solid fa-trash" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Lista de Pedidos</h2>
+      <RouterLink to="/pedido/crear" class="btn btn-primary">
+        <font-awesome-icon icon="fa-solid fa-plus" /> Nuevo Pedido
+      </RouterLink>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr style="background-color: black">
+            <th style="color: #e49e48">#</th>
+            <th style="color: #e49e48">Cliente</th>
+            <th style="color: #e49e48">Dirección</th>
+            <th style="color: #e49e48">Fecha</th>
+            <th style="color: #e49e48">Total</th>
+            <th style="color: #e49e48">Estado</th>
+            <th style="color: #e49e48">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(pedido, index) in pedidosFiltrados" :key="pedido.id" style="background-color: black">
+            <td style="color: #f8cb2e">{{ index + 1 }}</td>
+            <td style="color: #f8cb2e">{{ pedido.cliente?.nombre_completo }}</td>
+            <td style="color: #f8cb2e">{{ pedido.direccion?.direccion || '-' }}</td>
+            <td style="color: #f8cb2e">{{ formatFecha(pedido.fecha_creacion) }}</td>
+            <td style="color: #f8cb2e">Bs {{ pedido.total }}</td>
+            <td>
+              <span class="badge bg-success" v-if="pedido.estado === 'entregado'">Entregado</span>
+              <span class="badge bg-warning text-dark" v-else>Pendiente</span>
+            </td>
+            <td>
+              <button
+                v-if="pedido.estado === 'pendiente'"
+                class="btn btn-primary btn-sm me-1"
+                @click="marcarEntregado(pedido.id)"
+              >
+                <font-awesome-icon icon="fa-solid fa-check" class="me-1" />
+                Entregar
+              </button>
+              <button class="btn btn-info btn-sm" @click="verDetalle(pedido.id)">
+                <font-awesome-icon icon="fa-solid fa-eye" /> Ver
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal detalle -->
+    <div v-if="mostrarModal && pedidoSeleccionado" class="modal-backdrop">
+      <div class="modal-content p-4 bg-white rounded shadow-lg">
+        <h5>Detalle del Pedido</h5>
+        <p><strong>Cliente:</strong> {{ pedidoSeleccionado.cliente?.nombre_completo }}</p>
+        <p><strong>CI:</strong> {{ pedidoSeleccionado.cliente?.cedula_identidad }}</p>
+        <p><strong>Tipo:</strong> {{ pedidoSeleccionado.direccion ? 'Delivery' : 'Local' }}</p>
+        <p v-if="pedidoSeleccionado.direccion"><strong>Dirección:</strong> {{ pedidoSeleccionado.direccion.direccion }}</p>
+        <p><strong>Fecha:</strong> {{ formatFecha(pedidoSeleccionado.fecha_creacion) }}</p>
+        <p><strong>Estado:</strong> {{ pedidoSeleccionado.estado }}</p>
+        <hr>
+        <h6>Platillos:</h6>
+        <ul>
+          <li v-for="detalle in pedidoSeleccionado.detallePedidos" :key="detalle.id">
+            {{ detalle.platillo?.nombre }} x {{ detalle.cantidad }} = Bs {{ detalle.subtotal }}
+          </li>
+        </ul>
+        <p><strong>Total:</strong> Bs {{ pedidoSeleccionado.total }}</p>
+        <div class="text-end">
+          <button class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 8px;
+}
+</style>

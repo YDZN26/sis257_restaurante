@@ -117,14 +117,21 @@ const router = createRouter({
         }
       ]
     },
+
+   {
+  path: '/empleados',
+  name: 'empleados',
+  component: () => import('@/views/EmpleadoView.vue'),
+  children: [
+    { path: '', component: () => import('@/components/empleado/EmpleadoList.vue') },
+    { path: 'crear', component: () => import('@/components/empleado/EmpleadoCreate.vue') },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: 'editar/:id',
+      component: () => import('@/components/empleado/EmpleadoEdit.vue')
     }
+  ]
+},
+
   ]
 })
 

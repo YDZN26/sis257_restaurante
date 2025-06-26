@@ -50,25 +50,13 @@ const authStore = useAuthStore()
               <RouterLink to="/clientes" class="nav-link click-scroll">Clientes</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink to="/direcciones" class="nav-link click-scroll">Direcciones</RouterLink>
-            </li>
-            <li class="nav-item">
               <RouterLink to="/platillos" class="nav-link click-scroll">Platillos</RouterLink>
             </li>
             <li class="nav-item">
               <RouterLink to="/pedido" class="nav-link click-scroll">Pedidos</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink to="/detalles" class="nav-link click-scroll">Detalles</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink to="/repartidor" class="nav-link click-scroll">Repartidores</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink to="/pago" class="nav-link click-scroll">Pagos</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink to="/usuarios" class="nav-link click-scroll">Usuarios</RouterLink>
+              <RouterLink to="/empleados" class="nav-link click-scroll">Empleados</RouterLink>
             </li>
             <li class="nav-item">
               <a class="nav-link click-scroll" href="#">Hola {{ authStore.user }}</a>

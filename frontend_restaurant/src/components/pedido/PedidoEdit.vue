@@ -1,199 +1,144 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import http from '@/plugins/axios'
-import router from '@/router'
-import type { Repartidor } from '@/models/repartidor'
+import type { Pedido } from '@/models/pedido'
 import type { Cliente } from '@/models/cliente'
 import type { Direccion } from '@/models/direccion'
 import type { Platillo } from '@/models/platillo'
 
-var direcciones = ref<Direccion[]>([])
-async function getDireccion() {
-  direcciones.value = await http.get('direcciones').then((response) => response.data)
+const route = useRoute()
+const router = useRouter()
+const ENDPOINT = 'pedidos'
+const id = route.params.id
+
+const pedido = ref<Pedido | null>(null)
+const clientes = ref<Cliente[]>([])
+const direcciones = ref<Direccion[]>([])
+const platillos = ref<Platillo[]>([])
+
+const cliente_id = ref<number>()
+const direccion_id = ref<number>()
+const estado = ref(false)
+
+const seleccionados = ref<{ platillo_id: number; cantidad: number }[]>([])
+const total = ref(0)
+
+function calcularTotal() {
+  total.value = seleccionados.value.reduce((acum, s) => {
+    const platillo = platillos.value.find(p => p.id === s.platillo_id)
+    return platillo ? acum + platillo.precio * s.cantidad : acum
+  }, 0)
 }
 
-onMounted(() => {
-  getDireccion()
-})
+async function getDataInicial() {
+  const resPedido = await http.get(`${ENDPOINT}/${id}`).then(r => r.data)
+  pedido.value = resPedido
+  cliente_id.value = resPedido.cliente.id
+  direccion_id.value = resPedido.direccion?.id
+  estado.value = resPedido.estado
 
-var platillos = ref<Platillo[]>([])
-async function getPlatillo() {
-  platillos.value = await http.get('platillos').then((response) => response.data)
+  seleccionados.value = resPedido.detallePedidos.map((d: any) => ({
+    platillo_id: d.platilloId,
+    cantidad: d.cantidad
+  }))
+  calcularTotal()
 }
 
-onMounted(() => {
-  getPlatillo()
-})
-
-var clientes = ref<Cliente[]>([])
-async function getCliente() {
-  clientes.value = await http.get('clientes').then((response) => response.data)
+async function cargarOpciones() {
+  clientes.value = await http.get('clientes').then(r => r.data)
+  direcciones.value = await http.get('direcciones').then(r => r.data)
+  platillos.value = await http.get('platillos').then(r => r.data)
 }
 
-onMounted(() => {
-  getCliente()
-})
-
-var repartidores = ref<Repartidor[]>([])
-async function getRepartidor() {
-  repartidores.value = await http.get('repartidor').then((response) => response.data)
+function cambiarCantidad(index: number, nuevaCantidad: number) {
+  seleccionados.value[index].cantidad = nuevaCantidad
+  calcularTotal()
 }
 
-onMounted(() => {
-  getRepartidor()
-})
-const props = defineProps<{
-  ENDPOINT_API: string
-}>()
-
-const ENDPOINT = props.ENDPOINT_API ?? ''
-const cantidad = ref('')
-const total = ref('')
-const fechaPedido = ref('')
-const idRepartidor = ref('')
-const idCliente = ref('')
-const idPlatillo = ref('')
-const idDireccion = ref('')
-const id = router.currentRoute.value.params['id']
-
-async function editarPedido() {
-  await http
-    .patch(`${ENDPOINT}/${id}`, {
-      cantidad: cantidad.value,
-      total: total.value,
-      fechaPedido: fechaPedido.value,
-      idRepartidor: idRepartidor.value,
-      idCliente: idCliente.value,
-      idPlatillo: idPlatillo.value,
-      idDireccion: idDireccion.value
-    })
-    .then(() => router.push('/pedido'))
+function marcarEntregado() {
+  estado.value = true
 }
 
-async function getPedido() {
-  await http.get(`${ENDPOINT}/${id}`).then((response) => {
-    ;(cantidad.value = response.data.cantidad),
-      (total.value = response.data.total),
-      (fechaPedido.value = response.data.fechaPedido),
-      (idRepartidor.value = response.data.idRepartidor),
-      (idCliente.value = response.data.idCliente),
-      (idPlatillo.value = response.data.idPlatillo),
-      (idDireccion.value = response.data.idDireccion)
+async function guardarCambios() {
+  await http.patch(`${ENDPOINT}/${id}`, {
+    cliente_id: cliente_id.value,
+    direccion_id: direccion_id.value,
+    estado: estado.value,
+    total: total.value,
+    detalles: seleccionados.value
   })
+  router.push('/pedido')
 }
 
-function goBack() {
-  router.go(-1)
-}
-
-onMounted(() => {
-  getPedido()
+onMounted(async () => {
+  await cargarOpciones()
+  await getDataInicial()
 })
 </script>
 
 <template>
-  <br /><br /><br />
   <div class="container">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <RouterLink to="/">Inicio</RouterLink>
-        </li>
-        <li class="breadcrumb-item">
-          <RouterLink to="/pedido">Pedidos</RouterLink>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: black">
-          Editar Pedido
-        </li>
-      </ol>
-    </nav>
+    <h2>Editar Pedido</h2>
 
-    <div class="find-us">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="section-heading">
-            <h2>EDITAR DATOS DEL PEDIDO</h2>
-          </div>
-        </div>
+    <form @submit.prevent="guardarCambios">
+      <div class="form-floating mb-2">
+        <select class="form-control" v-model="cliente_id" required>
+          <option disabled value="">Seleccione un cliente</option>
+          <option v-for="c in clientes" :key="c.id" :value="c.id">
+            {{ c.nombre_completo }}
+          </option>
+        </select>
+        <label>Cliente</label>
       </div>
-    </div>
 
-    <div class="row">
-      <form @submit.prevent="editarPedido">
-        <div class="form-floating mb-3">
-          <select v-model="idRepartidor" class="form-select">
-            <option v-for="repartidor in repartidores" :value="repartidor.id">
-              {{ repartidor.nombreRepartidor }}
-            </option>
-          </select>
-          <label for="repartidor">Nombre del Repartidor</label>
-        </div>
+      <div class="form-floating mb-2">
+        <select class="form-control" v-model="direccion_id" required>
+          <option disabled value="">Seleccione una dirección</option>
+          <option v-for="d in direcciones" :key="d.id" :value="d.id">
+            {{ d.direccion }}
+          </option>
+        </select>
+        <label>Dirección</label>
+      </div>
 
-        <div class="form-floating mb-3">
-          <select v-model="idCliente" class="form-select">
-            <option v-for="cliente in clientes" :value="cliente.id">
-              {{ cliente.nombreCliente }}
-            </option>
-          </select>
-          <label for="cliente">Nombre del Cliente</label>
-        </div>
-
-        <div class="form-floating mb-3">
-          <select v-model="idDireccion" class="form-select">
-            <option v-for="direccion in direcciones" :value="direccion.id">
-              {{ direccion.direccion }}
-            </option>
-          </select>
-          <label for="cliente">Dirección</label>
-        </div>
-
-        <div class="form-floating mb-3">
-          <select v-model="idPlatillo" class="form-select">
-            <option v-for="platillo in platillos" :value="platillo.id">
-              {{ platillo.nombre }}
-            </option>
-          </select>
-          <label for="cliente">Nombre del Platillo</label>
-        </div>
-
-        <div class="form-floating">
+      <h4 class="mt-4">Platillos</h4>
+      <div v-for="(sel, index) in seleccionados" :key="index" class="mb-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <span>
+            {{
+              platillos.find(p => p.id === sel.platillo_id)?.nombre || 'Platillo no encontrado'
+            }}
+          </span>
           <input
             type="number"
-            class="form-control"
-            v-model="cantidad"
-            placeholder="cantidad"
-            required
+            min="1"
+            class="form-control w-25"
+            v-model.number="sel.cantidad"
+            @input="cambiarCantidad(index, sel.cantidad)"
           />
-          <label for="cantidad">Cantidad</label>
         </div>
+      </div>
 
-        <div class="form-floating">
-          <input type="number" class="form-control" v-model="total" placeholder="total" required />
-          <label for="total">Total</label>
-        </div>
+      <div class="mt-4">
+        <strong>Total:</strong> Bs. {{ total.toFixed(2) }}
+      </div>
 
-        <div class="form-floating mb-3">
-          <input
-            type="date"
-            class="form-control"
-            v-model="fechaPedido"
-            placeholder="fechaPedido"
-            required
-          />
-          <label for="fechaPedido">fecha del Pedido</label>
-        </div>
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" v-model="estado" />
+        <label class="form-check-label">Pedido entregado</label>
+      </div>
 
-        <div class="text-center mt-3">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Guardar Pedido
-          </button>
-        </div>
-      </form>
-    </div>
-    <div class="text-left">
-      <button class="btn btn-success" @click="goBack">Volver</button>
-    </div>
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <button type="button" class="btn btn-success ms-2" @click="marcarEntregado" v-if="!estado">
+          Marcar como Entregado
+        </button>
+      </div>
+    </form>
   </div>
 </template>
+
+
 
 <style></style>

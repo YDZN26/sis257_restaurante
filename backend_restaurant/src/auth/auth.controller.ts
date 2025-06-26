@@ -1,19 +1,16 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() loginDto: LoginDto) {
-    const user = this.authService.validateUser(
-      loginDto.usuario,
-      loginDto.clave,
-    );
-    if (!user) throw new UnauthorizedException('Credenciales incorrectas');
-
-    return this.authService.login(user);
+  @ApiOperation({ summary: 'Iniciar sesión y obtener token' })
+  login(@Body() dto: LoginDto) {
+    return this.authService.login(dto);
   }
 }

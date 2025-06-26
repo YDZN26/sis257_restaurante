@@ -1,179 +1,346 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import http from '@/plugins/axios'
 import router from '@/router'
-import type { Repartidor } from '@/models/repartidor'
 import type { Cliente } from '@/models/cliente'
 import type { Platillo } from '@/models/platillo'
 import type { Direccion } from '@/models/direccion'
 
-var direcciones = ref<Direccion[]>([])
-async function getDireccion() {
-  direcciones.value = await http.get('direcciones').then((response) => response.data)
+const hoy = new Date().toISOString().split('T')[0]
+const clientes = ref<Cliente[]>([])
+const platillos = ref<Platillo[]>([])
+const direcciones = ref<Direccion[]>([])
+
+const filtroCliente = ref('')
+const mostrarDropdown = ref(false)
+const clienteExistente = ref<Cliente | null>(null)
+const ci = ref('')
+const nombreCompleto = ref('')
+
+const clientesFiltrados = computed(() =>
+  clientes.value.filter(c =>
+    `${c.cedula_identidad} ${c.nombre_completo}`.toLowerCase().includes(filtroCliente.value.toLowerCase())
+  )
+)
+
+const modo = ref<'local' | 'delivery'>('local')
+const direccionSeleccionada = ref('')
+const nuevaDireccion = ref('')
+
+const platillo_id = ref('')
+const cantidad = ref(1)
+const stockDisponible = ref(0)
+
+const fecha = ref(new Date().toISOString().slice(0, 10))
+
+const detalles = ref<{ platillo: Platillo; cantidad: number }[]>([])
+const total = ref(0)
+const montoRecibido = ref(0)
+const cambio = computed(() => montoRecibido.value - total.value)
+const pagoValido = computed(() => montoRecibido.value >= total.value)
+
+function seleccionarClienteDesdeBusqueda(cliente: Cliente) {
+  clienteExistente.value = cliente
+  ci.value = cliente.cedula_identidad
+  nombreCompleto.value = cliente.nombre_completo
+  filtroCliente.value = `${cliente.cedula_identidad} - ${cliente.nombre_completo}`
+  mostrarDropdown.value = false
+}
+
+function handleClickOutside(e: MouseEvent) {
+  const target = e.target as HTMLElement
+  if (!target.closest('.autocomplete-container')) {
+    mostrarDropdown.value = false
+  }
 }
 
 onMounted(() => {
-  getDireccion()
+  getClientes()
+  getPlatillos()
+  getDirecciones()
+  window.addEventListener('click', handleClickOutside)
 })
 
-var platillos = ref<Platillo[]>([])
-async function getPlatillo() {
-  platillos.value = await http.get('platillos').then((response) => response.data)
+onBeforeUnmount(() => {
+  window.removeEventListener('click', handleClickOutside)
+})
+
+async function getClientes() {
+  clientes.value = await http.get('clientes').then(r => r.data)
 }
 
-onMounted(() => {
-  getPlatillo()
-})
-
-var clientes = ref<Cliente[]>([])
-async function getCliente() {
-  clientes.value = await http.get('clientes').then((response) => response.data)
+async function getPlatillos() {
+  platillos.value = await http.get('platillos').then(r => r.data)
 }
 
-onMounted(() => {
-  getCliente()
-})
-
-var repartidores = ref<Repartidor[]>([])
-async function getRepartidor() {
-  repartidores.value = await http.get('repartidor').then((response) => response.data)
+async function getDirecciones() {
+  direcciones.value = await http.get('direcciones').then(r => r.data)
 }
 
-onMounted(() => {
-  getRepartidor()
-})
+function actualizarStock() {
+  const platillo = platillos.value.find(p => p.id === +platillo_id.value)
+  stockDisponible.value = platillo?.stock || 0
+  cantidad.value = stockDisponible.value > 0 ? 1 : 0
+}
 
-const props = defineProps<{
-  ENDPOINT_API: string
-}>()
+function agregarDetalle() {
+  const platillo = platillos.value.find(p => p.id === +platillo_id.value)
+  if (!platillo || cantidad.value > platillo.stock || platillo.stock <= 0) return
 
-const ENDPOINT = props.ENDPOINT_API ?? ''
-const cantidad = ref('')
-const total = ref('')
-const fechaPedido = ref('')
-const idRepartidor = ref('')
-const idCliente = ref('')
-const idPlatillo = ref('')
-const idDireccion = ref('')
+  const existente = detalles.value.find(d => d.platillo.id === platillo.id)
+  if (existente) {
+    const nuevaCantidad = existente.cantidad + cantidad.value
+    if (nuevaCantidad <= platillo.stock) {
+      existente.cantidad = nuevaCantidad
+    }
+  } else {
+    detalles.value.push({ platillo: { ...platillo }, cantidad: cantidad.value })
+  }
+
+  platillo.stock -= cantidad.value
+  platillo_id.value = ''
+  stockDisponible.value = 0
+  cantidad.value = 0
+  calcularTotal()
+}
+
+function quitarDetalle(index: number) {
+  const detalle = detalles.value[index]
+  const platillo = platillos.value.find(p => p.id === detalle.platillo.id)
+  if (platillo) {
+    platillo.stock += detalle.cantidad
+  }
+  detalles.value.splice(index, 1)
+  cantidad.value = 0
+  calcularTotal()
+}
+
+function calcularTotal() {
+  total.value = detalles.value.reduce((acc, d) => acc + d.cantidad * d.platillo.precio, 0)
+}
 
 async function crearPedido() {
-  await http
-    .post(ENDPOINT, {
-      cantidad: cantidad.value,
-      total: total.value,
-      fechaPedido: fechaPedido.value,
-      idRepartidor: idRepartidor.value,
-      idCliente: idCliente.value,
-      idPlatillo: idPlatillo.value,
-      idDireccion: idDireccion.value
-    })
-    .then(() => router.push('/pedido'))
-}
+  let cliente_id = clienteExistente.value?.id
 
-function goBack() {
-  router.go(-1)
+  if (!cliente_id) {
+    const nuevoCliente = await http.post('clientes', {
+      cedula_identidad: ci.value,
+      nombre_completo: nombreCompleto.value
+    }).then(r => r.data)
+    cliente_id = nuevoCliente.id
+  }
+
+  let direccion_id = null
+  if (modo.value === 'delivery') {
+    if (direccionSeleccionada.value !== 'nueva') {
+      direccion_id = +direccionSeleccionada.value
+    } else {
+      const nueva = await http.post('direcciones', {
+        id_cliente: cliente_id,
+        direccion: nuevaDireccion.value,
+        estado: 'activo'
+      }).then(r => r.data)
+      direccion_id = nueva.id
+    }
+  }
+
+  const detallesFormateados = detalles.value.map(d => ({
+    platillo_id: d.platillo.id,
+    cantidad: d.cantidad
+  }))
+
+  await http.post('pedidos', {
+    id_cliente: cliente_id,
+    id_direccion: direccion_id,
+    fecha: new Date(),
+    total: total.value,
+    detalles: detallesFormateados
+  })
+
+  router.push('/pedido')
 }
 </script>
 
 <template>
-  <br /><br /><br />
-  <div class="container">
-    <div class="find-us">
+  <div class="container mt-5 mb-5">
+    <div class="find-us mb-4">
       <div class="row">
         <div class="col-md-12">
           <div class="section-heading">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                  <RouterLink to="/">Inicio</RouterLink>
-                </li>
-                <li class="breadcrumb-item">
-                  <RouterLink to="/pedido">Pedidos</RouterLink>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">Crear</li>
-              </ol>
-            </nav>
-            <h2>INSERTAR DATOS DEL PEDIDO</h2>
+            <h2 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
+              Crear Nuevo Pedido
+            </h2>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <form @submit.prevent="crearPedido">
-        <div class="form-floating mb-3">
-          <select v-model="idRepartidor" class="form-select">
-            <option v-for="repartidor in repartidores" :value="repartidor.id">
-              {{ repartidor.nombreRepartidor }}
-            </option>
-          </select>
-          <label for="repartidor">Nombre del Repartidor</label>
-        </div>
 
-        <div class="form-floating mb-3">
-          <select v-model="idCliente" class="form-select">
-            <option v-for="cliente in clientes" :value="cliente.id">
-              {{ cliente.nombreCliente }}
-            </option>
-          </select>
-          <label for="cliente">Nombre del Cliente</label>
-        </div>
+    <form @submit.prevent="crearPedido">
+      <!-- Cliente -->
+      <div class="mb-3 position-relative autocomplete-container">
+        <label class="form-label fw-bold">Buscar Cliente</label>
+        <input
+          type="text"
+          class="form-control"
+          v-model="filtroCliente"
+          @focus="mostrarDropdown = true"
+          @input="mostrarDropdown = true"
+          autocomplete="off"
+          placeholder="CI o Nombre del cliente"
+        />
+        <ul
+          v-if="mostrarDropdown"
+          class="list-group position-absolute w-100 z-3"
+          style="max-height: 200px; overflow-y: auto"
+        >
+          <li
+            class="list-group-item list-group-item-action"
+            v-for="c in clientesFiltrados"
+            :key="c.id"
+            @click="seleccionarClienteDesdeBusqueda(c)"
+          >
+            {{ c.cedula_identidad }} - {{ c.nombre_completo }}
+          </li>
+          <li v-if="clientesFiltrados.length === 0" class="list-group-item text-muted">
+            Cliente no encontrado. Ingrese manualmente los datos.
+          </li>
+        </ul>
+      </div>
 
-        <div class="form-floating mb-3">
-          <select v-model="idDireccion" class="form-select">
-            <option v-for="direccion in direcciones" :value="direccion.id">
-              {{ direccion.direccion }}
-            </option>
-          </select>
-          <label for="cliente">Dirección</label>
-        </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" v-model="ci" required />
+        <label>CI</label>
+      </div>
 
-        <div class="form-floating mb-3">
-          <select v-model="idPlatillo" class="form-select">
-            <option v-for="platillo in platillos" :value="platillo.id">
-              {{ platillo.nombre }}
-            </option>
-          </select>
-          <label for="cliente">Nombre del Platillo</label>
-        </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" v-model="nombreCompleto" required />
+        <label>Nombre Completo</label>
+      </div>
 
-        <div class="form-floating">
-          <input
-            type="number"
-            class="form-control"
-            v-model="cantidad"
-            placeholder="cantidad"
-            required
-          />
-          <label for="cantidad">Cantidad</label>
+      <!-- Tipo Pedido -->
+      <div class="mb-4">
+        <label class="form-label fw-bold">Tipo de Pedido</label><br />
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" v-model="modo" value="local" />
+          <label class="form-check-label">Local</label>
         </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" v-model="modo" value="delivery" />
+          <label class="form-check-label">Delivery</label>
+        </div>
+      </div>
 
-        <div class="form-floating">
-          <input type="number" class="form-control" v-model="total" placeholder="total" required />
-          <label for="total">Total</label>
-        </div>
+      <!-- Dirección -->
+      <div v-if="modo === 'delivery'" class="mb-3">
+        <label class="form-label fw-bold">Dirección:</label>
+        <select class="form-select" v-model="direccionSeleccionada">
+          <option value="" disabled>Seleccione una dirección</option>
+          <option v-for="d in direcciones" :key="d.id" :value="d.id">{{ d.direccion }}</option>
+          <option value="nueva">Nueva dirección</option>
+        </select>
+        <input
+          v-if="direccionSeleccionada === 'nueva'"
+          v-model="nuevaDireccion"
+          type="text"
+          class="form-control mt-2"
+          placeholder="Ingrese nueva dirección"
+        />
+      </div>
 
-        <div class="form-floating mb-3">
-          <input
-            type="date"
-            class="form-control"
-            v-model="fechaPedido"
-            placeholder="fechaPedido"
-            required
-          />
-          <label for="fechaPedido">fecha del Pedido</label>
-        </div>
+      <!-- Fecha -->
+      <div class="form-floating mb-3">
+        <input type="date" class="form-control" v-model="fecha" :max="hoy" required />
+        <label>Fecha</label>
+      </div>
 
-        <div class="text-center mt-3">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Crear Pedido
-          </button>
-        </div>
-      </form>
-    </div>
-    <div class="text-left">
-      <button class="btn btn-success" @click="goBack">Volver</button>
-    </div>
+      <!-- Platillos -->
+      <div class="form-floating mb-3">
+        <select class="form-select" v-model="platillo_id" @change="actualizarStock">
+          <option value="" disabled>Seleccione un platillo</option>
+          <option v-for="p in platillos" :key="p.id" :value="p.id" :disabled="p.stock <= 0">
+            {{ p.nombre }} (Bs {{ p.precio }}) - Stock: {{ p.stock }}
+          </option>
+        </select>
+        <label>Platillo</label>
+      </div>
+
+      <div v-if="stockDisponible > 0" class="form-floating mb-3">
+        <input
+          type="number"
+          class="form-control"
+          v-model.number="cantidad"
+          :max="stockDisponible"
+          min="1"
+        />
+        <label>Cantidad (máx: {{ stockDisponible }})</label>
+      </div>
+
+      <div v-else class="alert alert-danger p-2">Este platillo ya no tiene stock disponible.</div>
+
+      <div class="mb-3">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          @click="agregarDetalle"
+          :disabled="!platillo_id || cantidad > stockDisponible"
+        >
+          Agregar al Pedido
+        </button>
+      </div>
+
+      <!-- Detalles -->
+      <div v-if="detalles.length" class="mb-4">
+        <h5>Detalle del Pedido</h5>
+        <ul class="fw-normal">
+          <li
+            v-for="(d, index) in detalles"
+            :key="index"
+            class="mb-1"
+            style="color: black; font-weight: bold"
+          >
+            {{ d.platillo.nombre }} x {{ d.cantidad }} = Bs {{ d.platillo.precio * d.cantidad }}
+            <button @click="quitarDetalle(index)" class="btn btn-sm btn-danger ms-2">X</button>
+          </li>
+        </ul>
+
+        <h6 class="mt-3">Total: <span class="text-primary">Bs {{ total }}</span></h6>
+      </div>
+
+      <!-- Pago -->
+      <div class="form-floating mb-3">
+        <input type="number" class="form-control" v-model.number="montoRecibido" min="0" />
+        <label>Monto Recibido</label>
+      </div>
+
+      <div class="alert alert-warning" v-if="!pagoValido && montoRecibido">
+        Monto insuficiente. Debe ser al menos Bs {{ total }}
+      </div>
+      <div class="alert alert-success" v-if="pagoValido && cambio > 0">
+        Cambio: Bs {{ cambio }}
+      </div>
+
+      <!-- Botón -->
+      <div class="text-center mt-4">
+        <button
+          type="submit"
+          class="btn btn-primary btn-lg px-4"
+          :disabled="!pagoValido || detalles.length === 0"
+        >
+          <font-awesome-icon icon="fa-solid fa-floppy-disk" class="me-2" />
+          Guardar Pedido
+        </button>
+      </div>
+    </form>
   </div>
 </template>
 
-<style></style>
+
+<style>
+.autocomplete-container {
+  z-index: 999;
+  position: relative;
+}
+.z-3 {
+  z-index: 1050;
+}
+</style>

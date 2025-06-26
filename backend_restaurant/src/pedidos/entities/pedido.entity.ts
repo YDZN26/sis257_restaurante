@@ -1,48 +1,43 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   ManyToOne,
-  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-
-import { Repartidor } from 'src/repartidor/entities/repartidor.entity';
-import { Cliente } from 'src/cliente/entities/cliente.entity';
-import { Direccion } from 'src/direcciones/entities/direcciones.entity';
-import { Platillo } from 'src/platillos/entities/platillo.entity';
+import { Cliente } from '../../clientes/entities/cliente.entity';
+import { Direccion } from '../../direcciones/entities/direccion.entity';
+import { DetallePedido } from '../../detalle_pedidos/entities/detalle.entity';
 
 @Entity('pedidos')
 export class Pedido {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
   id: number;
 
-  @Column()
-  @ApiProperty()
-  cantidad: number;
-
-  @Column('decimal', { precision: 10, scale: 2 })
-  @ApiProperty()
-  total: number;
-
-  @Column({ type: 'date' })
-  @ApiProperty()
-  fechaPedido: string;
-
-  @ManyToOne(() => Repartidor, { eager: false })
-  @JoinColumn({ name: 'idRepartidor' })
-  repartidor: Repartidor;
-
-  @ManyToOne(() => Cliente, { eager: false })
-  @JoinColumn({ name: 'idCliente' })
+  @ManyToOne(() => Cliente)
   cliente: Cliente;
 
-  @ManyToOne(() => Direccion, { eager: false })
-  @JoinColumn({ name: 'idDireccion' })
+  @ManyToOne(() => Direccion, { nullable: true })
   direccion: Direccion;
 
-  @ManyToOne(() => Platillo, { eager: false })
-  @JoinColumn({ name: 'idPlatillo' })
-  platillo: Platillo;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  fecha: Date;
+
+  @Column('decimal', { precision: 10, scale: 2 })
+  total: number;
+
+  @Column({ default: 'pendiente' })
+  estado: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  fecha_creacion: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  fecha_modificacion: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  fecha_eliminacion: Date;
+
+  @OneToMany(() => DetallePedido, (detalle) => detalle.pedido)
+  detallePedidos: DetallePedido[];
 }

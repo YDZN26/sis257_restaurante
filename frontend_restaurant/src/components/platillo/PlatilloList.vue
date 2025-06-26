@@ -55,7 +55,9 @@ onMounted(() => {
               </h2>
               <div class="col-12"></div>
             </div>
-            <RouterLink to="/platillos/crear">Crear Nuevo Platilo </RouterLink>
+            <RouterLink to="/platillos/crear" class="btn btn-success mb-3">
+  <font-awesome-icon icon="fa-solid fa-plus" /> Crear Nuevo Platillo
+</RouterLink>
           </div>
         </div>
       </div>
@@ -86,8 +88,8 @@ onMounted(() => {
               <td align="center" style="color: #f8cb2e">{{ platillo.id }}</td>
               <td style="color: #f8cb2e">{{ platillo.nombre }}</td>
               <td style="color: #f8cb2e">{{ platillo.precio }}</td>
-              <td style="color: #f8cb2e">{{ platillo.tiempoPreparacion }}</td>
-              <td style="color: #f8cb2e">{{ platillo.disponibilidad }}</td>
+              <td style="color: #f8cb2e">{{ platillo.tiempo_preparacion }}</td>
+              <td style="color: #f8cb2e">{{ platillo.stock }}</td>
               <td>
                 <button class="btn text-success" @click="toEdit(platillo.id)">
                   <font-awesome-icon icon="fa-solid fa-edit" />
@@ -123,14 +125,14 @@ onMounted(() => {
         <div class="product-item">
           <a href="#">
           </a>
-          <div v-if="p.disponibilidad >= 1">
+          <div v-if="p.stock >= 1">
             <div class="down-content">
               <a href="/platillos/crear">
                 <h4>{{ p.nombre }}</h4>
               </a>
               <h6>Bs{{ p.precio }}</h6>
               <h7>DISPONIBLE en </h7>
-              <h8>{{ p.tiempoPreparacion }} min</h8>
+              <h8>{{ p.tiempo_preparacion }} min</h8>
               <br /><br /><br />
             </div>
           </div>

@@ -1,64 +1,55 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Direccion } from './entities/direcciones.entity';
-import { CreateDireccioneDto } from './dto/create-direccione.dto';
-import { UpdateDireccioneDto } from './dto/update-direccione.dto';
+import { Repository, IsNull } from 'typeorm';
+import { Direccion } from './entities/direccion.entity';
+import { CreateDireccionDto } from './dto/create-direccion.dto';
+import { UpdateDireccionDto } from './dto/update-direccion.dto';
 
 @Injectable()
 export class DireccionesService {
   constructor(
     @InjectRepository(Direccion)
-    private readonly direccionRepository: Repository<Direccion>,
+    private readonly direccionRepo: Repository<Direccion>,
   ) {}
 
-  async create(createDireccioneDto: CreateDireccioneDto): Promise<Direccion> {
-    const nueva = this.direccionRepository.create({
-      ...createDireccioneDto,
-      cliente: { id: createDireccioneDto.idCliente },
-      fecha_registro: new Date(),
+  create(dto: CreateDireccionDto): Promise<Direccion> {
+    const nueva = this.direccionRepo.create({
+      ...dto,
+      cliente: { id: dto.id_cliente },
     });
-    return this.direccionRepository.save(nueva);
+    return this.direccionRepo.save(nueva);
   }
 
-  async findAll(): Promise<Direccion[]> {
-    return this.direccionRepository.find({
+  findAll(): Promise<Direccion[]> {
+    return this.direccionRepo.find({
+      where: { fecha_eliminacion: IsNull() },
       relations: ['cliente'],
     });
   }
 
   async findOne(id: number): Promise<Direccion> {
-    const direccion = await this.direccionRepository.findOne({
+    const direccion = await this.direccionRepo.findOne({
       where: { id },
-      relations: ['cliente'], // ← importante para incluir el cliente
+      relations: ['cliente'],
     });
-
-    if (!direccion) {
+    if (!direccion || direccion.fecha_eliminacion) {
       throw new NotFoundException('Dirección no encontrada');
     }
-
     return direccion;
   }
 
-  async update(
-    id: number,
-    updateDireccioneDto: UpdateDireccioneDto,
-  ): Promise<Direccion> {
+  async update(id: number, dto: UpdateDireccionDto): Promise<Direccion> {
     const direccion = await this.findOne(id);
-
-    const actualizada = this.direccionRepository.create({
-      ...direccion,
-      direccion: updateDireccioneDto.direccion,
-      piso: updateDireccioneDto.piso,
-      indicaciones: updateDireccioneDto.indicaciones,
-      estado: updateDireccioneDto.estado,
-      cliente: { id: updateDireccioneDto.idCliente },
+    Object.assign(direccion, dto, {
+      cliente: { id: dto.id_cliente },
+      fecha_modificacion: new Date(),
     });
-
-    return this.direccionRepository.save(actualizada);
+    return this.direccionRepo.save(direccion);
   }
 
-  async remove(id: number): Promise<void> {
-    await this.direccionRepository.delete(id);
+  async remove(id: number): Promise<Direccion> {
+    const direccion = await this.findOne(id);
+    direccion.fecha_eliminacion = new Date();
+    return this.direccionRepo.save(direccion);
   }
 }

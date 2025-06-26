@@ -1,37 +1,38 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import http from '@/plugins/axios'
 import router from '@/router'
 
-const props = defineProps<{
-  ENDPOINT_API: string
-}>()
-
-const ENDPOINT = props.ENDPOINT_API ?? ''
-const nombreCliente = ref('')
-const carnetIdentidad = ref('')
-const fechaEdad = ref('')
-const celular = ref('')
 const id = router.currentRoute.value.params['id']
 
-async function editarCliente() {
-  await http
-    .patch(`${ENDPOINT}/${id}`, {
-      nombreCliente: nombreCliente.value,
-      carnetIdentidad: carnetIdentidad.value,
-      fechaEdad: fechaEdad.value,
-      celular: celular.value
-    })
-    .then(() => router.push('/clientes'))
+const cedula_identidad = ref('')
+const nombre_completo = ref('')
+const celular = ref('')
+
+async function obtenerCliente() {
+  try {
+    const response = await http.get(`clientes/${id}`)
+    cedula_identidad.value = response.data.cedula_identidad
+    nombre_completo.value = response.data.nombre_completo
+    celular.value = response.data.celular
+  } catch (error) {
+    console.error('Error al cargar cliente:', error)
+    alert('No se pudo cargar el cliente.')
+  }
 }
 
-async function getCliente() {
-  await http.get(`${ENDPOINT}/${id}`).then((response) => {
-    ;(nombreCliente.value = response.data.nombreCliente),
-      (carnetIdentidad.value = response.data.carnetIdentidad),
-      (fechaEdad.value = response.data.fechaEdad),
-      (celular.value = response.data.celular)
-  })
+async function actualizarCliente() {
+  try {
+    await http.put(`clientes/${id}`, {
+      cedula_identidad: cedula_identidad.value,
+      nombre_completo: nombre_completo.value,
+      celular: celular.value
+    })
+    router.push('/clientes')
+  } catch (error) {
+    console.error('Error al actualizar cliente:', error)
+    alert('No se pudo actualizar el cliente.')
+  }
 }
 
 function goBack() {
@@ -39,83 +40,57 @@ function goBack() {
 }
 
 onMounted(() => {
-  getCliente()
+  obtenerCliente()
 })
 </script>
 
 <template>
-  <br /><br /><br />
-  <div class="container">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><RouterLink to="/">Inicio</RouterLink></li>
-        <li class="breadcrumb-item">
-          <RouterLink to="/clientes">Cliente</RouterLink>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: black">
-          Editar Cliente
-        </li>
-      </ol>
-    </nav>
-    <div class="find-us">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="section-heading">
-            <h2>EDITAR DATOS DEL CLIENTE</h2>
-          </div>
-        </div>
+  <div class="container mt-5">
+    <h2>Editar Cliente</h2>
+    <form @submit.prevent="actualizarCliente">
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          v-model="cedula_identidad"
+          placeholder="CI"
+          required
+        />
+        <label>Cédula de Identidad</label>
       </div>
-    </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          v-model="nombre_completo"
+          placeholder="Nombre"
+          required
+        />
+        <label>Nombre Completo</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          v-model="celular"
+          placeholder="Celular"
+          required
+        />
+        <label>Celular</label>
+      </div>
 
-    <div class="row">
-      <form @submit.prevent="editarCliente">
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            v-model="nombreCliente"
-            placeholder="nombreCliente"
-            required
-          />
-          <label for="nombreCliente">Nombre Completo</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            v-model="carnetIdentidad"
-            placeholder="carnetIdentidad"
-            required
-          />
-          <label for="carnetIdentidad">Carnet de Identidad</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="Date" class="form-control" v-model="fechaEdad" placeholder="Edad" required />
-          <label for="fechaEdad">Fecha de Nacimiento</label>
-        </div>
-
-        <div class="form-floating mb-3">
-          <input
-            type="number"
-            class="form-control"
-            v-model="celular"
-            placeholder="celular"
-            required
-          />
-          <label for="celular">Celular</label>
-        </div>
-
-        <div class="text-center mt-3">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" /> Guardar Cliente
-          </button>
-        </div>
-      </form>
-    </div>
-    <div class="text-left">
-      <button class="btn btn-success" @click="goBack">Volver</button>
-    </div>
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-primary">
+          <font-awesome-icon icon="fa-solid fa-save" /> Actualizar
+        </button>
+        <button type="button" class="btn btn-secondary" @click="goBack">Volver</button>
+      </div>
+    </form>
   </div>
 </template>
 
-<style></style>
+<style scoped>
+.container {
+  max-width: 600px;
+}
+</style>
