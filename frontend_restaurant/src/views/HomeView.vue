@@ -82,7 +82,7 @@
         <div class="col-lg-6 col-12">
           <div class="about-text-wrap">
             <img src="@/assets/images/querico.jpg" alt="Image" class="img-fluid" />
-            <span class="date" style="color: white">Dic. 12, 2023</span>
+            <span class="date" style="color: white">jul. 1, 2025</span>
           </div>
         </div>
       </div>
